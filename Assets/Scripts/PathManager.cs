@@ -18,6 +18,7 @@ namespace PenguinRun
         private float m_ElementLenght;
         public float pathSpeed = 0;
         private ObjectPoolManager m_Pool;
+        private const float OFFSET = 0.25f;
 
         private void Update()
         {
@@ -51,7 +52,7 @@ namespace PenguinRun
         {
             for (int i = 0; i < NUM_OF_PATH; ++i)
             {
-                var element = Resources.Load<GameObject>($"Prefabs/Environment/{PATH}{i}");
+                var element = Resources.Load<GameObject>($"Prefabs/Environment/{PATH}/{PATH}{i}");
 
                 var elementScript = element.GetComponent<PathElement>();
                 if (elementScript == null)
@@ -67,11 +68,11 @@ namespace PenguinRun
 
             var objCollider = element.AddComponent<BoxCollider2D>();
             m_ElementLenght = objCollider.size.x;
+            m_ElementLenght -= OFFSET;
             DestroyImmediate(objCollider, true);
 
             m_ElementsStartingPoint = element.transform.position;
             m_ElementsStartingPoint.x = bottomRightScreenCornerX + (m_ElementLenght / 2);
-            Debug.LogError($"{m_ElementsStartingPoint.x} + {bottomRightScreenCornerX} + {m_ElementLenght / 2}");
         }
 
         IEnumerator InitialiseScene()
@@ -115,8 +116,8 @@ namespace PenguinRun
         private void GetNewElement()
         {
             var element = m_Pool.GetObject().GetComponent<PathElement>();
-            Vector3 pos = element.transform.position;
-            pos.x = m_LastElement.transform.position.x + m_ElementLenght;
+            Vector3 pos = m_LastElement.transform.position;
+            pos.x += m_ElementLenght;
             element.Activate(pos, pathSpeed);
             m_ActiveElements.Add(element);
             m_LastElement = element;
