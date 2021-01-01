@@ -13,13 +13,10 @@ namespace PenguinRun
             Move();
         }
 
-        public void Activate(float speed, Vector3 startPos, bool activateThunder = false)
+        public void Activate(float speed, Vector3 startPos)
         {
             this.transform.position = startPos;
             m_NextPos = speed * this.transform.right;
-
-            if (activateThunder)
-                StartCoroutine(ActivateThunder());
         }
 
         private void Move()
@@ -34,7 +31,7 @@ namespace PenguinRun
             yield return new WaitForSeconds(randomTime);
             thunder.Play();
 
-            yield return new WaitForSeconds(0.85f);
+            yield return new WaitForSeconds(0.80f);
             this.transform.GetComponent<AudioSource>().Play();
         }
 

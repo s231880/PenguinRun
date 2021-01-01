@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This script controls the background element such as Mountains, Icebergs and clouds
 namespace PenguinRun
 {
     public class EnvironmentManager : MonoBehaviour
@@ -13,7 +14,6 @@ namespace PenguinRun
         private const int NUM_OF_MOUNTAIN_SPRITES = 6;
         private const int NUM_OF_ICEBERG_SPRITES = 7;
         private const int NUM_OF_CLOUD_SPRITES = 3;
-        private const int NUM_OF_SUN_RAY_SPRITES = 3;
         private float m_BottomRightScreenCornerX;
         private const int NUM_OF_ELEMENT_PER_TYPE = 10;
 
@@ -34,7 +34,6 @@ namespace PenguinRun
         private const string MOUNTAIN = "Mountain";
         private const string ICEBERG = "Iceberg";
         private const string CLOUD = "Cloud";
-        private const string SUN_RAY = "SunRay";
         //-----------------------------------------------------------------------
         
         public void Initialise(float bottomRightScreenCornerX)
@@ -60,7 +59,6 @@ namespace PenguinRun
             m_ElementsKeys.Add(MOUNTAIN);
             m_ElementsKeys.Add(ICEBERG);
             m_ElementsKeys.Add(CLOUD);
-            //m_ElementsKeys.Add(SUN_RAY);
             m_BottomRightScreenCornerX = bottomRightScreenCornerX;
         }
 
@@ -79,9 +77,6 @@ namespace PenguinRun
                         break;
                     case CLOUD:
                         count = NUM_OF_CLOUD_SPRITES;
-                        break;
-                    case SUN_RAY:
-                        count = NUM_OF_SUN_RAY_SPRITES;
                         break;
                 }
                 List<GameObject> prefabList = new List<GameObject>();
@@ -179,7 +174,7 @@ namespace PenguinRun
                 if (elementType!= CLOUD)
                     element.Activate(backgroundSpeed, startingPos);
                 else
-                    element.Activate(backgroundSpeed, startingPos, PlayThunderEffect());
+                    element.Activate(backgroundSpeed, startingPos);
 
                 m_ActiveElementsDictionary[elementType].Add(element);
                 float posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - startingPos.x - GetRandomValue();
@@ -235,14 +230,13 @@ namespace PenguinRun
                     }
                 }
             }
-        }
-        //-----------------------------------------------------------------------
-        private bool PlayThunderEffect()
+        } 
+
+        public ParticleSystem GetActiveCloud()
         {
-            var probability = Random.Range(0.0f, 1f);
-            return (probability <= 0.1f) ? true : false;
+            var list = m_ActiveElementsDictionary[CLOUD];
+            return list[list.Count - 1].gameObject.GetComponent<ParticleSystem>(); 
         }
-        
-}
+    }
 }
 

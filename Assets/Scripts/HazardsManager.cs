@@ -27,6 +27,7 @@ namespace PenguinRun
         //Item containers => to get and return elements during the gameplay
         private Dictionary<string, ObjectPoolManager> m_ObjPoolsDictionary = new Dictionary<string, ObjectPoolManager>();
         private Dictionary<string, List<HazardElement>> m_ActiveHazardsDictionary = new Dictionary<string, List <HazardElement>>();
+        private Dictionary<string, List<HazardElement>> m_ElementsToBeRemovedDictionary = new Dictionary<string, List<HazardElement>>();
         private Dictionary<string, float> m_HazardsEndX = new Dictionary<string, float>();
         private Dictionary<string, Vector3> m_HazardsStartPos = new Dictionary<string, Vector3>();
 
@@ -138,8 +139,8 @@ namespace PenguinRun
 
             foreach (var key in m_HazardListKeys)
             {
-                List<HazardElement> list = new List<HazardElement>();
-                m_ActiveHazardsDictionary.Add(key, list);
+                m_ActiveHazardsDictionary.Add(key, new List<HazardElement>());
+                m_ElementsToBeRemovedDictionary.Add(key, new List<HazardElement>());
             }
         }
 
@@ -265,16 +266,12 @@ namespace PenguinRun
                                 //If hazard is no more visible
                                 if (hazard.transform.position.x < m_HazardsEndX[key])
                                 {
-                                    ReturnHazard(hazard, key);
+                                    m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+                                    m_ActiveHazardsDictionary[key].Remove(hazard);
                                     SetNewHazard();
                                     break;
                                 }
-                            }
-                            else
-                            {
-                                
-                            }
-                            
+                            } 
                         }
                     }
                 }
