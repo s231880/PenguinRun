@@ -23,5 +23,17 @@ namespace PenguinRun
         {
             this.transform.localPosition -= m_NextPos;
         }
+
+        private IEnumerator ActivateThunder()
+        {
+            var thunder = this.transform.GetComponentInChildren<ParticleSystem>();
+            var randomTime = Random.Range(0.0f, 2f);
+            yield return new WaitForSeconds(randomTime);
+            thunder.Play();
+
+            yield return new WaitForSeconds(0.80f);
+            this.transform.GetComponent<AudioSource>().Play();
+        }
+
     }
 }

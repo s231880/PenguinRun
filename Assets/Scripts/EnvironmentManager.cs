@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//This script controls the background element such as Mountains, Icebergs and clouds
 namespace PenguinRun
 {
     public class EnvironmentManager : MonoBehaviour
@@ -81,7 +82,7 @@ namespace PenguinRun
                 List<GameObject> prefabList = new List<GameObject>();
                 for (int i = 1; i <= count; ++i)
                 {
-                    var element = Resources.Load<GameObject>($"Prefabs/Environment/{key}{i}_");
+                    var element = Resources.Load<GameObject>($"Prefabs/Environment/{key}/{key}{i}_");
 
                     var elementScript = element.GetComponent<EnvironmentElement>();
                     if (elementScript == null)
@@ -170,7 +171,11 @@ namespace PenguinRun
             Vector3 startingPos = m_ElementsStartingPointsDictionary[elementType][element.name];
             if (element != null)
             {
-                element.Activate(backgroundSpeed, startingPos);
+                if (elementType!= CLOUD)
+                    element.Activate(backgroundSpeed, startingPos);
+                else
+                    element.Activate(backgroundSpeed, startingPos);
+
                 m_ActiveElementsDictionary[elementType].Add(element);
                 float posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - startingPos.x - GetRandomValue();
                 m_DistanceBeforeGenerateNewElement[elementType] = posBeforeActivateNewElement;
@@ -215,15 +220,23 @@ namespace PenguinRun
                     {
                         if (element.transform.position.x < -m_ElementsStartingPointsDictionary[key][element.name].x)
                         {
-                            m_ElementsToBeRemovedDictionary[key].Remove(element);
-                            ReturnElement(element, key);
-                            break;
+                            if (key != CLOUD || element.GetComponent<AudioSource>().isPlaying == false)
+                            {
+                                m_ElementsToBeRemovedDictionary[key].Remove(element);
+                                ReturnElement(element, key);
+                                break;
+                            }
                         }
                     }
                 }
             }
         } 
-        //-----------------------------------------------------------------------
+
+        public ParticleSystem GetActiveCloud()
+        {
+            var list = m_ActiveElementsDictionary[CLOUD];
+            return list[list.Count - 1].gameObject.GetComponent<ParticleSystem>(); 
+        }
     }
 }
 

@@ -55,6 +55,7 @@ namespace PenguinRun
         private GUIManager m_GuiManager;
         private HazardsManager m_HazardsManager;
         private PathManager m_PathManager;
+        private EffectManager m_EffectManager;
 
         //----------------------------------------------------------------
         //Time and Score
@@ -95,6 +96,9 @@ namespace PenguinRun
             if (m_EnvironmentManager == null)
                 Debug.LogError("EnvironmentManagerNull");
             m_EnvironmentManager.Initialise(bottomRightScreenCorner.x);
+
+            m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
+            m_EffectManager.Initialise();
 
             Vector3 penguinPos = m_MainCharacter.gameObject.transform.position;
             float penguinWidth = m_MainCharacter.gameObject.GetComponent<BoxCollider2D>().size.x;
@@ -169,6 +173,7 @@ namespace PenguinRun
                     m_EnvironmentManager.backgroundSpeed = EASY_SPEED;
                     m_HazardsManager.hazardsSpeed = EASY_SPEED;
                     m_PathManager.pathSpeed = EASY_SPEED;
+
                     break;
                 case GameDifficulty.Medium:
                     m_EnvironmentManager.backgroundSpeed = MEDIUM_SPEED;
@@ -182,6 +187,7 @@ namespace PenguinRun
                     m_PathManager.pathSpeed = HARD_SPEED;
                     break;
             }
+            m_EffectManager.SetSnowStormSpeed(m_CurrentDifficulty);
         }
 
         //Check the actual score to increase difficulty level
@@ -197,6 +203,11 @@ namespace PenguinRun
                 if (m_Score > HARD_THRESHOLD)
                     m_CurrentDifficulty = GameDifficulty.Hard;
             }
+        }
+
+        public ParticleSystem GetThunder()
+        {
+            return m_EnvironmentManager.GetActiveCloud();
         }
     
         private void EndGame()
