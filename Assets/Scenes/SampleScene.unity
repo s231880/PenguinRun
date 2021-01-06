@@ -312,7 +312,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0.396, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -3.000122, y: 3}
+  m_AnchoredPosition: {x: -3, y: 3}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &319102365
@@ -1447,7 +1447,7 @@ ParticleSystem:
           m_RotationOrder: 4
       cycleCount: 1
       repeatInterval: 0.01
-      probability: 0.5
+      probability: 1
   SizeModule:
     enabled: 1
     curve:
@@ -15908,7 +15908,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469118722}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -19.4, y: -4.26, z: 13.22}
+  m_LocalPosition: {x: -19.4, y: -4.26, z: 12.13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1795957616}
@@ -16975,8 +16975,8 @@ ParticleSystem:
           m_PostInfinity: 2
           m_RotationOrder: 4
       cycleCount: 1
-      repeatInterval: 4
-      probability: 0.2
+      repeatInterval: 0.01
+      probability: 1
   SizeModule:
     enabled: 1
     curve:

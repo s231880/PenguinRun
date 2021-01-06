@@ -254,14 +254,14 @@ namespace PenguinRun
         {
             foreach (var key in m_HazardListKeys)
             {
-                List<HazardElement> list = m_ActiveHazardsDictionary[key];
-                if (list.Count != 0)
+                if (GameController.Instance.gameDifficulty == GameDifficulty.Easy)
                 {
-                    foreach (var hazard in list)//Check every element in the list
+                    List<HazardElement> list = m_ActiveHazardsDictionary[key];
+                    if (list.Count != 0)
                     {
-                        if (hazard.transform.position.x < m_PenguinPosition.x)//If the element has passed the penguin
+                        foreach (var hazard in list)//Check every element in the list
                         {
-                            if( GameController.Instance.gameDifficulty == GameDifficulty.Easy)
+                            if (hazard.transform.position.x < m_PenguinPosition.x)//If the element has passed the penguin
                             {
                                 //If hazard is no more visible
                                 if (hazard.transform.position.x < m_HazardsEndX[key])
@@ -271,17 +271,47 @@ namespace PenguinRun
                                     SetNewHazard();
                                     break;
                                 }
-                            } 
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //When the difficult is not easy, hazards are generated once they pass the penguin and not when they
+                    // are out of scene
+                    List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];
+                    if (activeElementList.Count != 0)
+                    {
+                        foreach (var hazard in activeElementList)
+                        {
+                            //If the element has passed the penguin a new hazard is generated and the element is moved into 
+                            //another list, ready to be removed once it goes out of screen
+                            if (hazard.transform.position.x < m_PenguinPosition.x)
+                            {
+                                m_ActiveHazardsDictionary[key].Remove(hazard);
+                                m_ElementsToBeRemovedDictionary[key].Add(hazard);
+                                SetNewHazard();
+                                break;
+                            }
+                        }
+                    }
+                    List<HazardElement> toBeRemovedElementList = m_ElementsToBeRemovedDictionary[key];
+                    if (toBeRemovedElementList.Count != 0)
+                    {
+                        foreach (var hazard in toBeRemovedElementList)
+                        {
+                            //if true, the element is out of screen
+                            if (hazard.transform.position.x < m_HazardsEndX[key]) 
+                            {
+                                //Return the object to the obj pool and remove it from the list
+                                m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+                                m_ElementsToBeRemovedDictionary[key].Remove(hazard);
+                                break;
+                            }
                         }
                     }
                 }
             }
-        }
-
-        private void ReturnHazard(HazardElement hazard, string hazardType)
-        {
-            m_ObjPoolsDictionary[hazardType].ReturnObjectToThePool(hazard.gameObject);
-            m_ActiveHazardsDictionary[hazardType].Remove(hazard);
         }
     }
 }

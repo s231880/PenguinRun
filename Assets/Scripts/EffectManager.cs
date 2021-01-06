@@ -127,5 +127,10 @@ namespace PenguinRun
                     break;
             }
         }
+
+        private void GetAndReturnSunRay()
+        {
+
+        }
     }
 }
