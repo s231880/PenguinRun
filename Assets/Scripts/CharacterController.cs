@@ -28,6 +28,7 @@ namespace PenguinRun
         {
             m_Animator.SetBool("isJumping", state);
             //PlayDustAnimation();
+            Debug.Log("DIOPORCO");
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
