@@ -220,12 +220,9 @@ namespace PenguinRun
                     {
                         if (element.transform.position.x < -m_ElementsStartingPointsDictionary[key][element.name].x)
                         {
-                            if (key != CLOUD || element.GetComponent<AudioSource>().isPlaying == false)
-                            {
-                                m_ElementsToBeRemovedDictionary[key].Remove(element);
-                                ReturnElement(element, key);
-                                break;
-                            }
+                            m_ElementsToBeRemovedDictionary[key].Remove(element);
+                            ReturnElement(element, key);
+                            break;
                         }
                     }
                 }

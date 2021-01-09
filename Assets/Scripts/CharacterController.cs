@@ -28,13 +28,16 @@ namespace PenguinRun
         {
             m_Animator.SetBool("isJumping", state);
             //PlayDustAnimation();
-            Debug.Log("DIOPORCO");
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
-            //if (collision.gameObject.tag == "Hazard")
+            if (collision.gameObject.tag == "Hazard")
+            {
                 //GameController.Instance.playerState = PlayerState.Dead;
+                //Debug.LogError("DEAD");
+            }
+
             if (collision.gameObject.tag == "Path")
                 Debug.Log($"{collision.gameObject.name}Tag");
         }
@@ -44,9 +47,9 @@ namespace PenguinRun
             m_DustParticleSystem.Play();
         }
 
-        public void SetWalkSpeed(GameDifficulty currentDifficulty)
+        public void SetWalkSpeed()
         {
-            switch (currentDifficulty)
+            switch (GameController.Instance.gameDifficulty)
             {
                 case GameDifficulty.Easy:
                     m_Animator.speed = EASY_WALK_SPEED;

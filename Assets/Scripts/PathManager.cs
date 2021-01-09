@@ -87,8 +87,14 @@ namespace PenguinRun
             m_ActiveElements.Add(element);
             m_LastElement = element;
 
+            Vector3 secondStartingPoint = m_ElementsStartingPoint;
+            secondStartingPoint.x -= m_ElementLenght;
+            var secondElement = m_Pool.GetObject().GetComponent<PathElement>();
+            secondElement.Activate(secondStartingPoint, pathSpeed);
+            m_ActiveElements.Add(secondElement);
+
             Vector3 thirdStartingPoint = m_ElementsStartingPoint;
-            thirdStartingPoint.x -= m_ElementLenght;
+            thirdStartingPoint.x -= m_ElementLenght * 2;
             var thirdElement = m_Pool.GetObject().GetComponent<PathElement>();
             thirdElement.Activate(thirdStartingPoint, pathSpeed);
             m_ActiveElements.Add(thirdElement);

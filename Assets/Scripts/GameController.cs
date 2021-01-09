@@ -26,10 +26,7 @@ namespace PenguinRun
             set
             {
                 m_CurrentDifficulty = value;
-                m_MainCharacter.SetWalkSpeed(m_CurrentDifficulty);
-                m_HazardsManager.SetHazardCount(m_CurrentDifficulty);
-                SetGameElementsSpeed();
-                SetTimeRange();
+                NotifyManagers();
             }
         }
 
@@ -57,6 +54,9 @@ namespace PenguinRun
         private PathManager m_PathManager;
         private EffectManager m_EffectManager;
 
+        //public delegate void NotifyTheChange();
+        //public static event NotifyTheChange OnTrackingDifficultyChanged;
+
         //----------------------------------------------------------------
         //Time and Score
         private int m_Score = 0;
@@ -78,7 +78,7 @@ namespace PenguinRun
             Screen.orientation = ScreenOrientation.Landscape;
 #endif
 
-            Vector3 bottomRightScreenCorner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0));
+            Vector2 topRightScreenCorner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
 
             m_MainCharacter = this.transform.Find("Penguin").gameObject.AddComponent<CharacterController>();
             if (m_MainCharacter != null)
@@ -95,18 +95,18 @@ namespace PenguinRun
             m_EnvironmentManager = environmentTransform.gameObject.AddComponent<EnvironmentManager>();
             if (m_EnvironmentManager == null)
                 Debug.LogError("EnvironmentManagerNull");
-            m_EnvironmentManager.Initialise(bottomRightScreenCorner.x);
-
-            m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
-            m_EffectManager.Initialise();
+            m_EnvironmentManager.Initialise(topRightScreenCorner.x);
 
             Vector3 penguinPos = m_MainCharacter.gameObject.transform.position;
             float penguinWidth = m_MainCharacter.gameObject.GetComponent<BoxCollider2D>().size.x;
             m_HazardsManager = environmentTransform.gameObject.AddComponent<HazardsManager>();
-            m_HazardsManager.Initialise(penguinPos, penguinWidth, bottomRightScreenCorner.x);
+            m_HazardsManager.Initialise(penguinPos, penguinWidth, topRightScreenCorner.x);
+
+            m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
+            m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
 
             m_PathManager = environmentTransform.gameObject.AddComponent<PathManager>();
-            m_PathManager.Initialise(bottomRightScreenCorner.x);
+            m_PathManager.Initialise(topRightScreenCorner.x);
 
             m_GuiManager = this.transform.Find("GUI").gameObject.AddComponent<GUIManager>();
             m_GuiManager.Initialise();
@@ -173,18 +173,20 @@ namespace PenguinRun
                     m_EnvironmentManager.backgroundSpeed = EASY_SPEED;
                     m_HazardsManager.hazardsSpeed = EASY_SPEED;
                     m_PathManager.pathSpeed = EASY_SPEED;
-
+                    m_EffectManager.sunRaySpeed = EASY_SPEED;
                     break;
                 case GameDifficulty.Medium:
                     m_EnvironmentManager.backgroundSpeed = MEDIUM_SPEED;
                     m_HazardsManager.hazardsSpeed = MEDIUM_SPEED;
                     m_PathManager.pathSpeed = MEDIUM_SPEED;
+                    m_EffectManager.sunRaySpeed = MEDIUM_SPEED;
 
                     break;
                 case GameDifficulty.Hard:
                     m_EnvironmentManager.backgroundSpeed = HARD_SPEED;
                     m_HazardsManager.hazardsSpeed = HARD_SPEED;
                     m_PathManager.pathSpeed = HARD_SPEED;
+                    m_EffectManager.sunRaySpeed = HARD_SPEED;
                     break;
             }
             m_EffectManager.SetSnowStormSpeed(m_CurrentDifficulty);
@@ -227,6 +229,14 @@ namespace PenguinRun
         public void Restart()
         {
             
+        }
+
+        private void NotifyManagers()
+        {
+            m_MainCharacter.SetWalkSpeed();
+            m_HazardsManager.SetHazardCount();
+            SetGameElementsSpeed();
+            SetTimeRange();
         }
 
     }

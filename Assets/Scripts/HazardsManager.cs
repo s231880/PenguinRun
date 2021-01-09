@@ -225,9 +225,9 @@ namespace PenguinRun
             currentHazard = (HazardType)Random.Range(0, m_HazardsCount);
         }
 
-        public void SetHazardCount(GameDifficulty currentDifficulty)
+        public void SetHazardCount()
         {
-            switch (currentDifficulty)
+            switch (GameController.Instance.gameDifficulty)
             {
                 case GameDifficulty.Easy:
                     m_HazardsCount = EASY_HAZARDS;
