@@ -90,6 +90,7 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark03.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_FrameRateCounter.cs" />
     <Compile Include="Assets\Scripts\CharacterController.cs" />
+    <Compile Include="Assets\Water Reflection\Scripts\WaterReflection.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexJitter.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextEventHandler.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TMP_TextSelector_B.cs" />
@@ -99,7 +100,23 @@
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\TeleType.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\VertexZoom.cs" />
     <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
-    <Compile Include="Assets\Water Reflection\Scripts\WaterReflection.cs" />
+    <Compile Include="Assets\Tweens\ValueTween.cs" />
+    <Compile Include="Assets\Tweens\ParentTween.cs" />
+    <Compile Include="Assets\Tweens\FadeTweens\AudioFadeTween.cs" />
+    <Compile Include="Assets\Tweens\ColourTweens\CanvasColourTween.cs" />
+    <Compile Include="Assets\Tweens\ColourTweens\MaterialColourTween.cs" />
+    <Compile Include="Assets\Tweens\ColourTweens\ColourTween.cs" />
+    <Compile Include="Assets\Tweens\FadeTweens\FadeTween.cs" />
+    <Compile Include="Assets\Tweens\FadeTweens\MaterialFadeTween.cs" />
+    <Compile Include="Assets\Tweens\TweenExtensions.cs" />
+    <Compile Include="Assets\Tweens\Easing.cs" />
+    <Compile Include="Assets\Tweens\OrientTween.cs" />
+    <Compile Include="Assets\Tweens\FadeTweens\CanvasFadeTween.cs" />
+    <Compile Include="Assets\Tweens\ColourTweens\SpriteColourTween.cs" />
+    <Compile Include="Assets\Tweens\ScaleTween.cs" />
+    <Compile Include="Assets\Tweens\Tween.cs" />
+    <Compile Include="Assets\Tweens\RotateTween.cs" />
+    <Compile Include="Assets\Tweens\MoveTween.cs" />
   </ItemGroup>
   <ItemGroup>
      <None Include="Assets\TextMesh Pro\Resources\Shaders\TMPro.cginc" />

@@ -75,6 +75,7 @@ namespace PenguinRun
             InitialiseObjectPools();
             InitialiseHazardsKeyPositions(bottomRightScreenCornerX);
 
+
             StartCoroutine(InitialiseFirstHazard());
         }
 
@@ -196,6 +197,12 @@ namespace PenguinRun
                 hazard.Activate(startingPos, hazardsSpeed);
                 m_ActiveHazardsDictionary[type].Add(hazard);
             }
+
+            this.Create<ValueTween>(0.5f, EaseType.ExpoOut).Initialise(0f, 1f, (f) => {
+
+                Shader.SetGlobalFloat("_ShowAll", f);
+            });
+            Shader.SetGlobalFloat("_ShowMesh", 0f);
         }
 
         private void ActivateMultipleHazard(string type, int count, bool close = true ,bool highBird = false)
