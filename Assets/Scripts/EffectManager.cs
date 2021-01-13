@@ -16,11 +16,10 @@ namespace PenguinRun
         private const string THUNDER = "Thunder";
         private AudioClip m_ThunderSound;
         private AudioSource m_ThunderAudioSource;
+        private const int THUNDER_TIME_LAPSE = 20;
         //These variables are needed to do the light change due to the thunder
-        private const float MAX_BACKGROUND_ALPHA = 255;
-        private const float NORMAL_BACKGROUND_ALPHA = 130;
-        private Image m_Background;
-        private Light m_MainLight;
+        private ParticleSystem m_Thunder;
+        private GameObject m_Cloud;
         //-----------------------------------------------------------------------
         //Wind effect variables
         private const int WIND_TIME_LAPSE = 15; // Change name
@@ -34,8 +33,7 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Sun Rays effect variables
-        private const int MIN_RAYS_TIME_LAPSE = 20; 
-        private const int MAX_RAYS_TIME_LAPSE = 50; 
+        private const int MAX_RAYS_TIME_LAPSE = 25; 
         private const string SUN_RAY = "SunRay";
         private ObjectPoolManager m_SunRayPool;
         private Vector3 m_TopRightScreenCorner = Vector3.zero;
@@ -64,7 +62,6 @@ namespace PenguinRun
 
         public void Initialise(Vector3 topRightScreenCornerX,Vector3 penguinPos)
         {
-            m_Background = this.transform.parent.Find("GUI").GetComponentInChildren<Image>();
             m_ScreenLimit = -topRightScreenCornerX.x;
 
             SetInitialSunRayPosition(topRightScreenCornerX);
@@ -77,7 +74,7 @@ namespace PenguinRun
         {
             if (!m_IsSunRayActive)
             {
-                StartCoroutine(ActivateSunRay(SetRandomTime(MAX_RAYS_TIME_LAPSE, MIN_RAYS_TIME_LAPSE)));
+                StartCoroutine(ActivateSunRay(SetRandomTime(MAX_RAYS_TIME_LAPSE)));
                 m_IsSunRayActive = true;
             }
             else if (m_IsSunRayPlaying)
@@ -99,8 +96,23 @@ namespace PenguinRun
                 }
             }
 
+            if (!m_IsThunderActive)
+            {
+                StartCoroutine(PlayThunder(SetRandomTime(THUNDER_TIME_LAPSE)));
+                m_IsThunderActive = true;
+            }
+            else if(m_IsThunderPlaying)
+            {
+                if (HasThunderBeenPlayed())
+                {
+                    PlaySounds(THUNDER);
+                    ResetEffectVariable(THUNDER);
+                }
+            }
         }
-
+        
+        //-----------------------------------------------------------------------
+        //Initialise Functions
         private void InitialiseAudio()
         {
             var sources = Camera.main.GetComponents<AudioSource>();
@@ -147,23 +159,9 @@ namespace PenguinRun
         {
             m_TopRightScreenCorner = topRightScreenCornerX;
             m_TopRightScreenCorner.y += SUN_RAYS_OFFSET; 
-            
         }
 
-        private IEnumerator PlayThunder()
-        {
-            var thunder = GameController.Instance.GetThunder();
-            thunder.Play();
-
-            //Change background light: TO DO => Use twins
-
-
-            var randomTime = Random.Range(0.5f, 0.9f);
-            yield return new WaitForSeconds(randomTime);
-            m_ThunderAudioSource.clip = m_ThunderSound;
-            m_ThunderAudioSource.Play();
-        }
-
+        //-----------------------------------------------------------------------
         //TO DO
         public void SetSnowStormSpeed(GameDifficulty difficulty)
         {
@@ -172,6 +170,7 @@ namespace PenguinRun
                 case GameDifficulty.Easy:
                     break;
                 case GameDifficulty.Medium:
+
                     break;
                 case GameDifficulty.Hard:
                     break;
@@ -221,10 +220,6 @@ namespace PenguinRun
         private IEnumerator ActivateWind(float time)
         {
             yield return new WaitForSeconds(time);
-            //Set a random sound and play it
-            int randomSound = Random.Range(0, WIND_SOUNDS);
-            m_WindAudioSource.clip = m_WindsSounds[randomSound];
-            m_WindAudioSource.Play();
             m_PlayBothEffects = HowManyWindEffectActivate();
 
             if (m_PlayBothEffects == 1)
@@ -237,6 +232,7 @@ namespace PenguinRun
                 foreach (var wind in m_Winds)
                     wind.Play();
             }
+            PlaySounds(WIND);
             m_IsWindPlaying = true;
         }
         
@@ -253,10 +249,47 @@ namespace PenguinRun
         }
 
         //-----------------------------------------------------------------------
-        private IEnumerator ActivateThunder(float time)
+
+        private IEnumerator PlayThunder(float time)
         {
             yield return new WaitForSeconds(time);
+            m_Thunder = GameController.Instance.GetThunder();
+            if(m_Thunder != null)
+            {
+                m_Thunder.Play();
+                m_IsThunderPlaying = true;
+            }
+            else
+            {
+                ResetEffectVariable(THUNDER);
+            }
         }
+
+        private bool HasThunderBeenPlayed()
+        {
+            if (!m_Thunder.isPlaying)
+                return false;
+            else
+                return true;
+        }
+
+
+        private void PlaySounds(string type)
+        {
+            switch (type)
+            {
+                case WIND:
+                    int randomSound = Random.Range(0, WIND_SOUNDS);
+                    m_WindAudioSource.clip = m_WindsSounds[randomSound];
+                    m_WindAudioSource.Play();
+                    break;
+                case THUNDER:
+                    m_ThunderAudioSource.clip = m_ThunderSound;
+                    m_ThunderAudioSource.Play();
+                    break;
+            }
+        }
+
         //-----------------------------------------------------------------------
         //Once the effect has been playied the variables are reset
         private void ResetEffectVariable(string effect)
@@ -274,6 +307,7 @@ namespace PenguinRun
                 case THUNDER:
                     m_IsThunderActive = false;
                     m_IsThunderPlaying = false;
+                    m_Thunder = null;
                     break;
             }
         }

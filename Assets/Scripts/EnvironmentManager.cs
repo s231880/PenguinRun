@@ -232,7 +232,13 @@ namespace PenguinRun
         public ParticleSystem GetActiveCloud()
         {
             var list = m_ActiveElementsDictionary[CLOUD];
-            return list[list.Count - 1].gameObject.GetComponent<ParticleSystem>(); 
+
+           foreach(var cloud in list)
+            { 
+                if (cloud.transform.position.x > 0)
+                    return cloud.GetComponentInChildren<ParticleSystem>();
+            }
+            return null;
         }
     }
 }

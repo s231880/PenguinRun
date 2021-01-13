@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace PenguinRun
 {
@@ -102,14 +103,15 @@ namespace PenguinRun
             m_HazardsManager = environmentTransform.gameObject.AddComponent<HazardsManager>();
             m_HazardsManager.Initialise(penguinPos, penguinWidth, topRightScreenCorner.x);
 
+            m_GuiManager = this.transform.Find("GUI").gameObject.AddComponent<GUIManager>();
+            m_GuiManager.Initialise();
+
+            var image = m_GuiManager.gameObject.transform.Find("Image").GetComponent<Image>();
             m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
             m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
 
             m_PathManager = environmentTransform.gameObject.AddComponent<PathManager>();
             m_PathManager.Initialise(topRightScreenCorner.x);
-
-            m_GuiManager = this.transform.Find("GUI").gameObject.AddComponent<GUIManager>();
-            m_GuiManager.Initialise();
 
             gameDifficulty = GameDifficulty.Easy;
             playerState = PlayerState.Alive;
