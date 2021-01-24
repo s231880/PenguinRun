@@ -6,20 +6,28 @@ using UnityEngine.UI;
 namespace PenguinRun
 {
     //This script controls particle systems, audio & light effects
+    //Background music from PlayOnLoop.com  => https://www.playonloop.com/
+    //Licensed under Creative Commons by Attribution 4.0
+
     public class EffectManager : MonoBehaviour
     {
         private float m_ScreenLimit;
         private ParticleSystem m_Snow;
         public float m_SnowStormSpeed;
+        private AudioClip m_SoundTrack;
+        private AudioSource m_SoundTrackSource;
         //-----------------------------------------------------------------------
         //Thunder effect variables
         private const string THUNDER = "Thunder";
         private AudioClip m_ThunderSound;
         private AudioSource m_ThunderAudioSource;
         private const int THUNDER_TIME_LAPSE = 20;
-        //These variables are needed to do the light change due to the thunder
         private ParticleSystem m_Thunder;
-        private GameObject m_Cloud;
+        private Image m_Background;
+        private const float DARK_ALPHA_BACKGROUND = 130;
+        private const float BRIGHT_ALPHA_BACKGROUND = 255;
+        private Color m_BackgroundColor;
+
         //-----------------------------------------------------------------------
         //Wind effect variables
         private const int WIND_TIME_LAPSE = 15; // Change name
@@ -43,7 +51,7 @@ namespace PenguinRun
         //the ray is removed
         private GameObject m_RayLimit = null;
         private EnvironmentElement m_ActiveRay;
-        public float sunRaySpeed;
+        public float m_SunRaySpeed;
   
 
 
@@ -60,10 +68,11 @@ namespace PenguinRun
         private bool m_IsSunRayPlaying = false;
         //-----------------------------------------------------------------------
 
-        public void Initialise(Vector3 topRightScreenCornerX,Vector3 penguinPos)
+        public void Initialise(Vector3 topRightScreenCornerX,Vector3 penguinPos, Image image)
         {
             m_ScreenLimit = -topRightScreenCornerX.x;
-
+            m_Background = image;
+            m_BackgroundColor = m_Background.color;
             SetInitialSunRayPosition(topRightScreenCornerX);
             InitialiseParticleSystems();
             InitialiseAudio();
@@ -118,6 +127,7 @@ namespace PenguinRun
             var sources = Camera.main.GetComponents<AudioSource>();
             m_ThunderAudioSource = sources[0];
             m_WindAudioSource = sources[1];
+            m_SoundTrackSource = sources[2];
 
             for (int i = 1; i <= WIND_SOUNDS; ++i)
             {
@@ -125,6 +135,17 @@ namespace PenguinRun
                 m_WindsSounds.Add(windSound);
             }
             m_ThunderSound = Resources.Load<AudioClip>($"AudioClip/Thunder");
+            m_SoundTrack = Resources.Load<AudioClip>($"AudioClip/Soundtrack");
+            m_SoundTrackSource.clip = m_SoundTrack;
+#if UNITY_ANDROID
+            m_SoundTrackSource.playOnAwake = true;
+            m_SoundTrackSource.loop = true;
+            m_SoundTrackSource.Play();
+#else
+
+            m_SoundTrackSource.playOnAwake = true;
+            m_SoundTrackSource.Stop();
+#endif
         }
 
         private void InitialiseSunRaysPool()
@@ -177,7 +198,7 @@ namespace PenguinRun
             }
         }
 
-        //There could be multiple sun ray enabled ad the same time, as for the wind effect
+        //There could be multiple wind effect enabled ad the same time 
         private int HowManyWindEffectActivate()
         {
             int randomVariable = Random.Range(0, 10);
@@ -194,7 +215,7 @@ namespace PenguinRun
             EnvironmentElement ray = m_SunRayPool.GetObject().GetComponent<EnvironmentElement>(); 
             if(ray != null)
             {
-                ray.Activate(sunRaySpeed, m_TopRightScreenCorner);
+                ray.Activate(m_SunRaySpeed, m_TopRightScreenCorner);
                 m_ActiveRay = ray;
                 m_RayLimit = ray.gameObject.transform.Find("Limit").gameObject;
                 m_IsSunRayPlaying = true;
@@ -273,7 +294,6 @@ namespace PenguinRun
                 return true;
         }
 
-
         private void PlaySounds(string type)
         {
             switch (type)
@@ -316,5 +336,29 @@ namespace PenguinRun
         {
             return Random.Range(minValue, maxValue);
         }
+
+        //-----------------------------------------------------------------------
+        //Increase effects speed functions
+        public void IncreaseEffectsSpeed(float newSpeed)
+        {
+            IncreaseSunRaySpeed(newSpeed);
+            IncreaseSnowStormSpeed(); 
+        }
+
+        private void IncreaseSunRaySpeed(float newSpeed)
+        {
+            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            {
+                m_SunRaySpeed = newSpeed;
+            }).Initialise(m_SunRaySpeed, newSpeed, (f) =>
+            {
+                if (m_ActiveRay != null)
+                    m_ActiveRay.IncreaseSpeed(f);
+            });
+            
+
+        }
+        // TO BE IMPLEMENTED
+        private void IncreaseSnowStormSpeed() { }
     }
 }

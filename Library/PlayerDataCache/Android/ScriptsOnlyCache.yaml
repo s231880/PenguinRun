@@ -13,7 +13,11 @@ ScriptsOnlyBuild:
     - UnityEditor.Tilemaps.SceneViewOpenTilePaletteHelper
     - UnityEditor.Tilemaps.TileDragAndDropManager
     - UnityEditor.Tilemaps.TilemapPrefabStageHelper
+    Unity.CollabProxy.Editor.dll:
+    - Unity.Cloud.Collaborate.UserInterface.CollaborateWindow
+    - Unity.Cloud.Collaborate.UserInterface.WindowCache
     Unity.InputSystem.dll:
+    - UnityEngine.InputSystem.Editor.InputActionEditorWindow
     - UnityEngine.InputSystem.InputActionAsset
     - UnityEngine.InputSystem.InputActionReference
     - UnityEngine.InputSystem.InputSettings
@@ -57,8 +61,6 @@ ScriptsOnlyBuild:
     - UnityEngine.Rendering.Universal.UniversalRenderPipelineAsset
     Unity.Rider.Editor.dll:
     - Packages.Rider.Editor.UnitTesting.CallbackData
-    Unity.ShaderGraph.Editor.dll:
-    - UnityEditor.ShaderGraph.Drawing.MaterialGraphEditWindow
     Unity.TextMeshPro.dll:
     - TMPro.TMP_ColorGradient
     - TMPro.TMP_FontAsset
@@ -66,6 +68,12 @@ ScriptsOnlyBuild:
     - TMPro.TMP_SpriteAsset
     - TMPro.TMP_StyleSheet
     - TMPro.TextMeshProUGUI
+    UnityEditor.Graphs.dll:
+    - UnityEditor.Graphs.AnimationBlendTree.Graph
+    - UnityEditor.Graphs.AnimationBlendTree.GraphGUI
+    - UnityEditor.Graphs.AnimationStateMachine.Graph
+    - UnityEditor.Graphs.AnimationStateMachine.GraphGUI
+    - UnityEditor.Graphs.AnimatorControllerTool
     UnityEditor.TestRunner.dll:
     - UnityEditor.TestTools.TestRunner.Api.CallbacksHolder
     - UnityEditor.TestTools.TestRunner.TestListCacheData
@@ -128,115 +136,115 @@ ScriptsOnlyBuild:
     - Class: 104
       Script: {instanceID: 0}
     - Class: 114
-      Script: {instanceID: 1636}
-    - Class: 114
-      Script: {instanceID: 1638}
-    - Class: 114
-      Script: {instanceID: 1640}
-    - Class: 114
-      Script: {instanceID: 1642}
-    - Class: 114
-      Script: {instanceID: 1644}
-    - Class: 114
-      Script: {instanceID: 1646}
-    - Class: 114
       Script: {instanceID: 1648}
+    - Class: 114
+      Script: {instanceID: 1650}
     - Class: 114
       Script: {instanceID: 1652}
     - Class: 114
-      Script: {instanceID: 1688}
+      Script: {instanceID: 1654}
     - Class: 114
-      Script: {instanceID: 1768}
+      Script: {instanceID: 1656}
     - Class: 114
-      Script: {instanceID: 2112}
+      Script: {instanceID: 1658}
     - Class: 114
-      Script: {instanceID: 2128}
+      Script: {instanceID: 1660}
     - Class: 114
-      Script: {instanceID: 2274}
+      Script: {instanceID: 1664}
     - Class: 114
-      Script: {instanceID: 2360}
+      Script: {instanceID: 1700}
     - Class: 114
-      Script: {instanceID: 2566}
+      Script: {instanceID: 1784}
     - Class: 114
-      Script: {instanceID: 2958}
+      Script: {instanceID: 2132}
     - Class: 114
-      Script: {instanceID: 3026}
+      Script: {instanceID: 2148}
     - Class: 114
-      Script: {instanceID: 3080}
+      Script: {instanceID: 2294}
     - Class: 114
-      Script: {instanceID: 3154}
+      Script: {instanceID: 2380}
     - Class: 114
-      Script: {instanceID: 3264}
+      Script: {instanceID: 2586}
     - Class: 114
-      Script: {instanceID: 3362}
+      Script: {instanceID: 2982}
     - Class: 114
-      Script: {instanceID: 3462}
+      Script: {instanceID: 3050}
     - Class: 114
-      Script: {instanceID: 3640}
+      Script: {instanceID: 3106}
     - Class: 114
-      Script: {instanceID: 3748}
+      Script: {instanceID: 3180}
     - Class: 114
-      Script: {instanceID: 3770}
+      Script: {instanceID: 3290}
     - Class: 114
-      Script: {instanceID: 3852}
+      Script: {instanceID: 3388}
     - Class: 114
-      Script: {instanceID: 3988}
+      Script: {instanceID: 3488}
     - Class: 114
-      Script: {instanceID: 4070}
+      Script: {instanceID: 3668}
     - Class: 114
-      Script: {instanceID: 4252}
+      Script: {instanceID: 3776}
     - Class: 114
-      Script: {instanceID: 4512}
+      Script: {instanceID: 3800}
     - Class: 114
-      Script: {instanceID: 4648}
+      Script: {instanceID: 3882}
     - Class: 114
-      Script: {instanceID: 4674}
+      Script: {instanceID: 4020}
     - Class: 114
-      Script: {instanceID: 4688}
+      Script: {instanceID: 4104}
     - Class: 114
-      Script: {instanceID: 4698}
+      Script: {instanceID: 4286}
     - Class: 114
-      Script: {instanceID: 4746}
+      Script: {instanceID: 4548}
     - Class: 114
-      Script: {instanceID: 4754}
+      Script: {instanceID: 4684}
     - Class: 114
-      Script: {instanceID: 4914}
+      Script: {instanceID: 4710}
     - Class: 114
-      Script: {instanceID: 4916}
+      Script: {instanceID: 4724}
     - Class: 114
-      Script: {instanceID: 4932}
+      Script: {instanceID: 4734}
     - Class: 114
-      Script: {instanceID: 5150}
+      Script: {instanceID: 4784}
     - Class: 114
-      Script: {instanceID: 5376}
+      Script: {instanceID: 4792}
     - Class: 114
-      Script: {instanceID: 5384}
+      Script: {instanceID: 4954}
     - Class: 114
-      Script: {instanceID: 5440}
+      Script: {instanceID: 4956}
     - Class: 114
-      Script: {instanceID: 5446}
+      Script: {instanceID: 4972}
     - Class: 114
-      Script: {instanceID: 5522}
+      Script: {instanceID: 5190}
     - Class: 114
-      Script: {instanceID: 5554}
+      Script: {instanceID: 5416}
+    - Class: 114
+      Script: {instanceID: 5424}
+    - Class: 114
+      Script: {instanceID: 5480}
+    - Class: 114
+      Script: {instanceID: 5486}
+    - Class: 114
+      Script: {instanceID: 5562}
     - Class: 114
       Script: {instanceID: 5594}
     - Class: 114
-      Script: {instanceID: 5744}
+      Script: {instanceID: 5634}
     - Class: 114
-      Script: {instanceID: 5854}
+      Script: {instanceID: 5786}
     - Class: 114
-      Script: {instanceID: 5954}
+      Script: {instanceID: 5896}
     - Class: 114
-      Script: {instanceID: 5968}
+      Script: {instanceID: 5998}
     - Class: 114
-      Script: {instanceID: 6508}
+      Script: {instanceID: 6012}
     - Class: 114
-      Script: {instanceID: 6550}
+      Script: {instanceID: 6554}
     - Class: 114
-      Script: {instanceID: 6794}
+      Script: {instanceID: 6596}
     - Class: 114
-      Script: {instanceID: 7016}
+      Script: {instanceID: 6842}
+    - Class: 114
+      Script: {instanceID: 7066}
     - Class: 115
       Script: {instanceID: 0}
     - Class: 128
@@ -324,10 +332,22 @@ ScriptsOnlyBuild:
     className: PlayerInput
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MoveTween
+  - hash:
+      serializedVersion: 2
       Hash: ca0b8ad3987cd33b3209a508b6e1562e
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering
     className: FreeCamera
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MaterialFadeTween
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -405,6 +425,12 @@ ScriptsOnlyBuild:
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
     assemblyName: Assembly-CSharp.dll
     namespaceName: 
+    className: ScaleTween
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
     className: ObjectPoolManager
   - hash:
       serializedVersion: 2
@@ -412,6 +438,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.RenderPipelines.Universal.Runtime.dll
     namespaceName: UnityEngine.Experimental.Rendering.Universal
     className: RenderObjects
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: MaterialColourTween
   - hash:
       serializedVersion: 2
       Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
@@ -516,6 +548,12 @@ ScriptsOnlyBuild:
     className: TMP_TextSelector_A
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: RotateTween
+  - hash:
+      serializedVersion: 2
       Hash: 1f0602e7bad1e0a9cba31ce292eee8bb
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
@@ -600,6 +638,12 @@ ScriptsOnlyBuild:
     className: UniversalAdditionalCameraData
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: SpriteColourTween
+  - hash:
+      serializedVersion: 2
       Hash: a53651ee3996fbba20dfe0fce02f0b23
     assemblyName: Unity.Postprocessing.Runtime.dll
     namespaceName: UnityEngine.Rendering.PostProcessing
@@ -654,7 +698,7 @@ ScriptsOnlyBuild:
     className: TextMeshProFloatingText
   - hash:
       serializedVersion: 2
-      Hash: 2e2eabedbf6c6b1a1a5e4846d77a2218
+      Hash: cfca8ef3e931c07e01ec57ecbe5cf675
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: HazardsManager
@@ -690,7 +734,7 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerToggleHistory
   - hash:
       serializedVersion: 2
-      Hash: 19461bf415b517aab74930c6663e9daf
+      Hash: 4c73de16affd16fe4c1d468fc90e4f45
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: EnvironmentManager
@@ -706,6 +750,12 @@ ScriptsOnlyBuild:
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem
     className: InputActionAsset
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ParentTween
   - hash:
       serializedVersion: 2
       Hash: e63944317d2f5958e31963668bb29158
@@ -870,6 +920,12 @@ ScriptsOnlyBuild:
     className: DebugUIHandlerEnumHistory
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: OrientTween
+  - hash:
+      serializedVersion: 2
       Hash: 426e5bd616852254b77531cd1a8e29b6
     assemblyName: Unity.InputSystem.dll
     namespaceName: UnityEngine.InputSystem.OnScreen
@@ -996,6 +1052,12 @@ ScriptsOnlyBuild:
     className: PostProcessResources
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ValueTween
+  - hash:
+      serializedVersion: 2
       Hash: ac6acd886c54c48c599ab5fed5781ea7
     assemblyName: Unity.Postprocessing.Runtime.dll
     namespaceName: UnityEngine.Rendering.PostProcessing
@@ -1050,7 +1112,7 @@ ScriptsOnlyBuild:
     className: Light2D
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: aef85c912f016b819f4ddbca511a7081
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: GameController
@@ -1078,6 +1140,12 @@ ScriptsOnlyBuild:
     assemblyName: Assembly-CSharp.dll
     namespaceName: TMPro.Examples
     className: WarpTextExample
+  - hash:
+      serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: AudioFadeTween
   - hash:
       serializedVersion: 2
       Hash: 344a8c2e106a0a4e098e91a52e0af063
@@ -1188,7 +1256,7 @@ ScriptsOnlyBuild:
     className: GUIManager
   - hash:
       serializedVersion: 2
-      Hash: 03ab35bcbdac07f59335bffa96e227d5
+      Hash: eb1f5027cc2e498991090bd8ff727625
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: PathManager
@@ -1338,6 +1406,12 @@ ScriptsOnlyBuild:
     className: TMP_FrameRateCounter
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: CanvasFadeTween
+  - hash:
+      serializedVersion: 2
       Hash: d3f29ba27f28c1f558880c4df5545ed3
     assemblyName: Unity.InputSystem.dll
     namespaceName: 
@@ -1374,10 +1448,16 @@ ScriptsOnlyBuild:
     className: PlayableTrack
   - hash:
       serializedVersion: 2
-      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+      Hash: 28386b550094d23102649441a8778b99
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: CharacterController
+  - hash:
+      serializedVersion: 2
+      Hash: f3a39819105a15bf993fdff1a4831628
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: WaterReflection
   - hash:
       serializedVersion: 2
       Hash: e63944317d2f5958e31963668bb29158
@@ -1452,7 +1532,7 @@ ScriptsOnlyBuild:
     className: SignalTrack
   - hash:
       serializedVersion: 2
-      Hash: 411656db04e76ac21d90e70796853ec1
+      Hash: 9dd8a10879209a008500d5b3e6fee20e
     assemblyName: Assembly-CSharp.dll
     namespaceName: PenguinRun
     className: EffectManager
@@ -1584,6 +1664,12 @@ ScriptsOnlyBuild:
     className: VertexZoom
   - hash:
       serializedVersion: 2
+      Hash: 71bb6a6b6c8f052f948db64c7dd3ca4f
+    assemblyName: Assembly-CSharp.dll
+    namespaceName: 
+    className: ColourTween
+  - hash:
+      serializedVersion: 2
       Hash: 36025d42bf23fda83a55bf1429201821
     assemblyName: Unity.RenderPipelines.Core.Runtime.dll
     namespaceName: UnityEngine.Rendering.UI
@@ -1615,4 +1701,4 @@ ScriptsOnlyBuild:
   platform: 13
   scenePathNames:
   - Assets/Scenes/SampleScene.unity
-  playerPath: C:/Users/tiziano.casu/Desktop/Build/PenguinRun_V05.apk
+  playerPath: C:/Users/tiziano.casu/Desktop/Build/PenguinRun_V08.apk

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PenguinRun
 {
@@ -9,25 +7,24 @@ namespace PenguinRun
 
         private Animator m_Animator;
         private ParticleSystem m_DustParticleSystem;
-        private Rigidbody2D m_Rigidbody;
+        [SerializeField] private Animation m_WalkAnimation;
 
+        private float m_CurrentSpeed = 0;
+        private float m_WalkSpeed = 0;
         private const float EASY_WALK_SPEED = 1f;
         private const float MEDIUM_WALK_SPEED = 1.5f;
         private const float HARD_WALK_SPEED = 2f;
-
+        public bool m_Ready = false;
 
         private void Awake()
         {
             m_Animator = gameObject.transform.GetComponent<Animator>();
             m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
-            m_Rigidbody = gameObject.GetComponent<Rigidbody2D>();
-            InitialiseAnimator();
         }
 
         public void Jump(bool state)
         {
             m_Animator.SetBool("isJumping", state);
-            //PlayDustAnimation();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -35,11 +32,8 @@ namespace PenguinRun
             if (collision.gameObject.tag == "Hazard")
             {
                 //GameController.Instance.playerState = PlayerState.Dead;
-                //Debug.LogError("DEAD");
+                Debug.LogError("DEAD");
             }
-
-            if (collision.gameObject.tag == "Path")
-                Debug.Log($"{collision.gameObject.name}Tag");
         }
 
         private void PlayDustAnimation()
@@ -52,29 +46,32 @@ namespace PenguinRun
             switch (GameController.Instance.gameDifficulty)
             {
                 case GameDifficulty.Easy:
-                    m_Animator.speed = EASY_WALK_SPEED;
+                    IncrementWalkSpeed(EASY_WALK_SPEED);
                     break;
                 case GameDifficulty.Medium:
-                    m_Animator.speed = MEDIUM_WALK_SPEED;
+                    IncrementWalkSpeed(MEDIUM_WALK_SPEED);
                     break;
                 case GameDifficulty.Hard:
-                    m_Animator.speed = HARD_WALK_SPEED;
+                    IncrementWalkSpeed(HARD_WALK_SPEED);
                     break;
             }
+
         }
 
-        private void InitialiseAnimator()
+        private void IncrementWalkSpeed(float walkSpeed)
         {
-            //AnimationEvent jumpAnimation = m_Animator.runtimeAnimatorController.animationClips[1];
-            //jumpAnimation.functionName = "PlayDustAnimation";
-            //Debug.LogError($"{jumpAnimation}");
-            //jumpAnimation.
-        }
-
-        //Approfondire
-        public void OnAnimationEvent(AnimationEvent evt)
-        {
-            PlayDustAnimation();
+            if(walkSpeed != m_CurrentSpeed)
+            {
+                this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+                {
+                    //Once the speed has increased to the maximum, inform the GameController
+                    m_Ready = true;
+                    m_CurrentSpeed = walkSpeed;
+                }).Initialise(m_CurrentSpeed, walkSpeed, (f) =>
+                {
+                    m_Animator.speed = f;//=>Check if works
+                });
+            }
         }
     }
 }

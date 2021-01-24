@@ -16,10 +16,18 @@ namespace PenguinRun
         private const int NUM_OF_CLOUD_SPRITES = 3;
         private float m_BottomRightScreenCornerX;
         private const int NUM_OF_ELEMENT_PER_TYPE = 10;
-
+        public bool m_Ready = false;
         //-----------------------------------------------------------------------
         //Object Pools & List used to manage the activation/disactivation
-        private List<string> m_ElementsKeys = new List<string>();
+        private const string MOUNTAIN = "Mountain";
+        private const string ICEBERG = "Iceberg";
+        private const string CLOUD = "Cloud";
+        private List<string> m_ElementsKeys = new List<string>
+        {
+            MOUNTAIN,
+            ICEBERG,
+            CLOUD
+        };
         private Dictionary<string, ObjectPoolManager> m_PoolsDictionary = new Dictionary<string, ObjectPoolManager>();
         private Dictionary<string, List<EnvironmentElement>> m_ActiveElementsDictionary = new Dictionary<string, List<EnvironmentElement>>();
         private Dictionary<string, List<EnvironmentElement>> m_ElementsToBeRemovedDictionary = new Dictionary<string, List<EnvironmentElement>>();
@@ -29,40 +37,26 @@ namespace PenguinRun
         //-----------------------------------------------------------------------
         //Speed variables  & constants
 
-        public float backgroundSpeed;
-
-        private const string MOUNTAIN = "Mountain";
-        private const string ICEBERG = "Iceberg";
-        private const string CLOUD = "Cloud";
+        public float m_ElementsSpeed = 0;
         //-----------------------------------------------------------------------
-        
+        void Update()
+        {
+            UpdateEnvironment();
+        }
+        //-----------------------------------------------------------------------
+        //Initialisation Functions
         public void Initialise(float bottomRightScreenCornerX)
         {
-            InitialiseConstants(bottomRightScreenCornerX);
-            InitialiseBackgroundElements();
+            m_BottomRightScreenCornerX = bottomRightScreenCornerX;
+            InitialiseElements();
             SetElementsStartingPosition();
             InitialiseObjectPools();
 
             //Used a coroutine to manage time synchronisation with GameController
-            StartCoroutine(InitialiseBackground());
+            SetupBackground();
         }
 
-        void Update()
-        {
-            GetAndReturnElements();
-        }
-        //-----------------------------------------------------------------------
-        //Initialisation Functions
-
-        private void InitialiseConstants(float bottomRightScreenCornerX)
-        {
-            m_ElementsKeys.Add(MOUNTAIN);
-            m_ElementsKeys.Add(ICEBERG);
-            m_ElementsKeys.Add(CLOUD);
-            m_BottomRightScreenCornerX = bottomRightScreenCornerX;
-        }
-
-        private void InitialiseBackgroundElements()
+        private void InitialiseElements()
         {
             int count = 0;
             foreach (string key in m_ElementsKeys)
@@ -114,26 +108,23 @@ namespace PenguinRun
             }
         }
 
-        IEnumerator InitialiseBackground()
+        private void SetupBackground()
         {
-            while (backgroundSpeed == 0)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-
             foreach (var key in m_ElementsKeys)
             {
                 EnvironmentElement element = m_PoolsDictionary[key].GetObject().GetComponent<EnvironmentElement>();
+                float posBeforeActivateNewElement;
                 if (element != null)
                 {
                     Vector3 startingPos = element.transform.position;
                     startingPos.x = Random.Range(-m_BottomRightScreenCornerX, m_BottomRightScreenCornerX);
-                    element.Activate(backgroundSpeed, startingPos);
+                    element.Activate(m_ElementsSpeed, startingPos);
                     m_ActiveElementsDictionary[key].Add(element);
-                    float posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - m_ElementsStartingPointsDictionary[key][element.name].x + GetRandomValue();
+                    posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - m_ElementsStartingPointsDictionary[key][element.name].x + GetRandomValue();
                     m_DistanceBeforeGenerateNewElement.Add(key, posBeforeActivateNewElement);
                 }
             }
+            m_Ready = true;
         }
 
         private float GetElementLenght(GameObject obj)
@@ -172,9 +163,9 @@ namespace PenguinRun
             if (element != null)
             {
                 if (elementType!= CLOUD)
-                    element.Activate(backgroundSpeed, startingPos);
+                    element.Activate(m_ElementsSpeed, startingPos);
                 else
-                    element.Activate(backgroundSpeed, startingPos);
+                    element.Activate(m_ElementsSpeed, startingPos);
 
                 m_ActiveElementsDictionary[elementType].Add(element);
                 float posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - startingPos.x - GetRandomValue();
@@ -186,14 +177,10 @@ namespace PenguinRun
         {
             m_PoolsDictionary[elementType].ReturnObjectToThePool(element.gameObject);
             m_ActiveElementsDictionary[elementType].Remove(element);
-        }
-        
-        private float GetRandomValue()
-        {
-            float randomVal =  Random.Range(-m_BottomRightScreenCornerX, m_BottomRightScreenCornerX);
-            return randomVal;
-        }
-        private  void GetAndReturnElements()
+        } 
+        //-----------------------------------------------------------------------
+        //Manage the environment => once an element is out of scene is returned to the pool and a new one is activated
+        private void UpdateEnvironment()
         {
             foreach (var key in m_ElementsKeys)
             {
@@ -227,18 +214,78 @@ namespace PenguinRun
                     }
                 }
             }
-        } 
-
+        }
+        //-----------------------------------------------------------------------
+        //Get and return elements to the object pools
+        private float GetRandomValue()
+        {
+            float randomVal = Random.Range(-m_BottomRightScreenCornerX, m_BottomRightScreenCornerX);
+            return randomVal;
+        }
+        //-----------------------------------------------------------------------
+        //Get a cloud to the environment manager to activate the thunder effect
         public ParticleSystem GetActiveCloud()
         {
             var list = m_ActiveElementsDictionary[CLOUD];
 
            foreach(var cloud in list)
-            { 
+           { 
                 if (cloud.transform.position.x > 0)
                     return cloud.GetComponentInChildren<ParticleSystem>();
-            }
+           }
             return null;
+        }
+        //-----------------------------------------------------------------------
+        //Increase elements speed when the game diffult is increased
+        public void IncreaseElementsSpeed(float newSpeed)
+        {
+            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            {
+                m_ElementsSpeed = newSpeed;
+            }).Initialise(m_ElementsSpeed, newSpeed, (f) =>
+            {
+                foreach (var key in m_ElementsKeys)
+                {
+                    var activeElements = m_ActiveElementsDictionary[key];
+                    if (activeElements.Count != 0)
+                    {
+                        foreach (var element in activeElements)
+                            element.IncreaseSpeed(f);
+                    }
+                    var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
+                    if (elementsToBeRemoved.Count != 0)
+                    {
+                        foreach (var element in elementsToBeRemoved)
+                            element.IncreaseSpeed(f); 
+                    }
+                }
+            });
+        }
+
+        public void Reset()
+        {
+            m_Ready = false;
+            foreach (var key in m_ElementsKeys)
+            {
+                var activeElements = m_ActiveElementsDictionary[key];
+                if (activeElements.Count != 0)
+                {
+                    foreach (var element in activeElements)
+                        m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
+
+                    activeElements.Clear();
+                }
+
+                var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
+                if (elementsToBeRemoved.Count != 0)
+                {
+                    foreach (var element in elementsToBeRemoved)
+                        m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
+
+                    elementsToBeRemoved.Clear();
+                }
+            }
+            SetupBackground();
         }
     }
 }

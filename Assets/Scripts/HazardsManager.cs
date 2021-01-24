@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//Some things could have be done differently, for example the width, start and end positions could have 
+//been set as private/public variable into the hazard script instead of been store into a dictionary here
+//I'll change them in future
 namespace PenguinRun
 {
     public enum HazardType
@@ -21,8 +24,11 @@ namespace PenguinRun
     public class HazardsManager : MonoBehaviour
     {
         private Dictionary<string, GameObject> m_HazardPrefabDictionary = new Dictionary<string, GameObject>();
-
-        private List<string> m_HazardListKeys = new List<string>();
+        private List<string> m_HazardListKeys = new List<string>
+        {
+            FIRE,
+            BIRD
+        };
         //-------------------------------------------------------------------------------
         //Item containers => to get and return elements during the gameplay
         private Dictionary<string, ObjectPoolManager> m_ObjPoolsDictionary = new Dictionary<string, ObjectPoolManager>();
@@ -31,20 +37,21 @@ namespace PenguinRun
         private Dictionary<string, float> m_HazardsEndX = new Dictionary<string, float>();
         private Dictionary<string, Vector3> m_HazardsStartPos = new Dictionary<string, Vector3>();
 
-        
         //-------------------------------------------------------------------------------
         //Constant variables
-        private const int EASY_HAZARDS = 2;
-        private const int MEDIUM_HAZARDS = 6;
-        private const int HARD_HAZARDS = 8;
-        private const int HIGH_BIRD_MULTIPLIER_CONST = 5;
-        private const int NUM_OF_HAZARDS_PER_TYPE = 7;
+        private const int EASY_HAZARDS = 3;
+        private const int MEDIUM_HAZARDS = 7;
+        private const int HARD_HAZARDS = 9;
+        private const int HIGH_BIRD_MULTIPLIER_CONST = 7;
+        private const int NUM_OF_HAZARDS_PER_TYPE = 5;
         private const string FIRE = "Fire";
         private const string BIRD = "Bird";
         //-------------------------------------------------------------------------------
 
         private int m_HazardsCount;
-        public float hazardsSpeed = 0;
+        private float m_HazardBreak = 0;
+        public float m_hazardsSpeed = 0;
+        public bool m_Ready = false;
 
         private Vector3 m_PenguinPosition = new Vector3();
         private float m_PenguinWidth = 0;
@@ -67,21 +74,30 @@ namespace PenguinRun
         public void Initialise(Vector3 penguinPosition, float penguinWidth, float bottomRightScreenCornerX)
         {
             m_PenguinPosition = penguinPosition;
-            m_PenguinWidth = penguinWidth * 2;
+            m_PenguinWidth = penguinWidth * 2f;
 
             //Find all hazards and initialise Object Pools
             InitialiseVariables();
             InitialiseHazards();
             InitialiseObjectPools();
             InitialiseHazardsKeyPositions(bottomRightScreenCornerX);
-
-
-            StartCoroutine(InitialiseFirstHazard());
         }
 
         void Update()
         {
-            GetAndReturnHazards();
+            UpdateHazards();
+        }
+
+        //-----------------------------------------------------------------------
+        //Initialising functions 
+        private void InitialiseVariables()
+        {
+            //Initialising container to get and return elements
+            foreach (var key in m_HazardListKeys)
+            {
+                m_ActiveHazardsDictionary.Add(key, new List<HazardElement>());
+                m_ElementsToBeRemovedDictionary.Add(key, new List<HazardElement>());
+            }
         }
 
         private void InitialiseHazards()
@@ -117,8 +133,10 @@ namespace PenguinRun
                 objPool.CreateObjPool(m_HazardPrefabDictionary[key], NUM_OF_HAZARDS_PER_TYPE, pool.transform, activeHazards.transform);
                 m_ObjPoolsDictionary.Add(key, objPool);
             }
+            m_Ready = true;
         }
 
+        //-----------------------------------------------------------------------
         //Function to set the elements starting pos. I've set variables through this approach 
         //because I took into account that differnt devices have diffenrent screen width
         private void InitialiseHazardsKeyPositions(float bottomRightScreenCornerX)
@@ -132,17 +150,33 @@ namespace PenguinRun
             }
         }
 
-        private void InitialiseVariables()
+        //-----------------------------------------------------------------------
+        //Set different types of hazard according to the difficulty
+        public void SetHazardCount()
         {
-            //Initialising container to get and return elements
-            m_HazardListKeys.Add(BIRD);
-            m_HazardListKeys.Add(FIRE);
-
-            foreach (var key in m_HazardListKeys)
+            switch (GameController.Instance.gameDifficulty)
             {
-                m_ActiveHazardsDictionary.Add(key, new List<HazardElement>());
-                m_ElementsToBeRemovedDictionary.Add(key, new List<HazardElement>());
+                case GameDifficulty.Easy:
+                    m_HazardsCount = EASY_HAZARDS;
+                    m_HazardBreak = 6;
+                    break;
+                case GameDifficulty.Medium:
+                    m_HazardsCount = MEDIUM_HAZARDS;
+                    m_HazardBreak = 4;
+                    break;
+                case GameDifficulty.Hard:
+                    m_HazardsCount = HARD_HAZARDS;
+                    m_HazardBreak = 3;
+                    break;
             }
+        }
+        //-----------------------------------------------------------------------
+        //Set new random hazard to be activated
+        public IEnumerator SetNewHazard()
+        {
+            float time = Random.Range(0, m_HazardBreak);
+            yield return new WaitForSeconds(time);
+            currentHazard = (HazardType)Random.Range(0, m_HazardsCount);
         }
 
         private void GetHazard()
@@ -191,18 +225,11 @@ namespace PenguinRun
                 if (highBird)
                 {
                     startingPos.y *= HIGH_BIRD_MULTIPLIER_CONST;
-                    Debug.LogError("HIGHBIRD");
                 }
 
-                hazard.Activate(startingPos, hazardsSpeed);
+                hazard.Activate(startingPos, m_hazardsSpeed);
                 m_ActiveHazardsDictionary[type].Add(hazard);
             }
-
-            this.Create<ValueTween>(0.5f, EaseType.ExpoOut).Initialise(0f, 1f, (f) => {
-
-                Shader.SetGlobalFloat("_ShowAll", f);
-            });
-            Shader.SetGlobalFloat("_ShowMesh", 0f);
         }
 
         private void ActivateMultipleHazard(string type, int count, bool close = true ,bool highBird = false)
@@ -221,43 +248,14 @@ namespace PenguinRun
                     else
                         startingPos.x += m_PenguinWidth * i;
 
-                    hazard.Activate(startingPos, hazardsSpeed);
+                    hazard.Activate(startingPos, m_hazardsSpeed);
                     m_ActiveHazardsDictionary[type].Add(hazard);
                 }
             }
         }
 
-        private void SetNewHazard()
-        {
-            currentHazard = (HazardType)Random.Range(0, m_HazardsCount);
-        }
 
-        public void SetHazardCount()
-        {
-            switch (GameController.Instance.gameDifficulty)
-            {
-                case GameDifficulty.Easy:
-                    m_HazardsCount = EASY_HAZARDS;
-                    break;
-                case GameDifficulty.Medium:
-                    m_HazardsCount = MEDIUM_HAZARDS;
-                    break;
-                case GameDifficulty.Hard:
-                    m_HazardsCount = HARD_HAZARDS;
-                    break;
-            }
-        }
-
-        IEnumerator InitialiseFirstHazard()
-        {
-            while (hazardsSpeed == 0)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-            SetNewHazard();
-        }
-
-        private void GetAndReturnHazards()
+        private void UpdateHazards()
         {
             foreach (var key in m_HazardListKeys)
             {
@@ -275,7 +273,7 @@ namespace PenguinRun
                                 {
                                     m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
                                     m_ActiveHazardsDictionary[key].Remove(hazard);
-                                    SetNewHazard();
+                                    StartCoroutine(SetNewHazard());
                                     break;
                                 }
                             }
@@ -295,9 +293,9 @@ namespace PenguinRun
                             //another list, ready to be removed once it goes out of screen
                             if (hazard.transform.position.x < m_PenguinPosition.x)
                             {
-                                m_ActiveHazardsDictionary[key].Remove(hazard);
+                                activeElementList.Remove(hazard);
                                 m_ElementsToBeRemovedDictionary[key].Add(hazard);
-                                SetNewHazard();
+                                StartCoroutine(SetNewHazard());
                                 break;
                             }
                         }
@@ -312,11 +310,63 @@ namespace PenguinRun
                             {
                                 //Return the object to the obj pool and remove it from the list
                                 m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
-                                m_ElementsToBeRemovedDictionary[key].Remove(hazard);
+                                toBeRemovedElementList.Remove(hazard);
                                 break;
                             }
                         }
                     }
+                }
+            }
+        }
+        //-----------------------------------------------------------------------
+        //Increase hazard speed when the game diffult is increased
+        public void IncreaseElementsSpeed(float newSpeed)
+        {
+            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            {
+                m_hazardsSpeed = newSpeed;
+            }).Initialise(m_hazardsSpeed, newSpeed, (f) =>
+            {
+                foreach (var key in m_HazardListKeys)
+                {
+                    var activeElements = m_ActiveHazardsDictionary[key];
+                    if (activeElements.Count != 0)
+                    {
+                        foreach (var element in activeElements)
+                            element.IncreaseSpeed(f);
+                    }
+                    var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
+                    if (elementsToBeRemoved.Count != 0)
+                    {
+                        foreach (var element in elementsToBeRemoved)
+                            element.IncreaseSpeed(f);
+                    }
+                }
+            });
+        }
+
+        //-----------------------------------------------------------------------
+        //Reset Manager
+        public void Reset()
+        {
+            m_Ready = false;
+            foreach (var key in m_HazardListKeys)
+            {
+                List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];
+                if (activeElementList.Count != 0)
+                {
+                    foreach (var hazard in activeElementList)
+                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+
+                    activeElementList.Clear();
+                }
+                List<HazardElement> toBeRemovedElementList = m_ElementsToBeRemovedDictionary[key];
+                if (toBeRemovedElementList.Count != 0)
+                {
+                    foreach (var hazard in toBeRemovedElementList)
+                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+
+                    toBeRemovedElementList.Clear();
                 }
             }
         }

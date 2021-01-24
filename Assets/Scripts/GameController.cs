@@ -62,6 +62,8 @@ namespace PenguinRun
         //Time and Score
         private int m_Score = 0;
         private float m_TimeRange = 0;
+        public float m_GameInitialisationTime = 5;
+        public int m_InitialisationsTasks = 0;
         //----------------------------------------------------------------
         //Score thresholds to change difficult
         private const int MEDIUM_THRESHOLD = 100;
@@ -70,6 +72,10 @@ namespace PenguinRun
         private const float EASY_SPEED = 0.04f;
         private const float MEDIUM_SPEED = 0.15f;
         private const float HARD_SPEED = 0.3f;
+
+        private const float HAZARD_EASY_SPEED = 0.08f;
+        private const float HAZARD_MEDIUM_SPEED = 0.3f;
+        private const float HAZARD_HARD_SPEED = 0.6f;
 
         void Awake()
         {
@@ -102,23 +108,19 @@ namespace PenguinRun
             float penguinWidth = m_MainCharacter.gameObject.GetComponent<BoxCollider2D>().size.x;
             m_HazardsManager = environmentTransform.gameObject.AddComponent<HazardsManager>();
             m_HazardsManager.Initialise(penguinPos, penguinWidth, topRightScreenCorner.x);
+            //StartCoroutine(StartHazards(penguinPos, penguinWidth, ));
 
             m_GuiManager = this.transform.Find("GUI").gameObject.AddComponent<GUIManager>();
             m_GuiManager.Initialise();
 
             var image = m_GuiManager.gameObject.transform.Find("Image").GetComponent<Image>();
             m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
-            m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
+            m_EffectManager.Initialise(topRightScreenCorner, penguinPos, image);
 
             m_PathManager = environmentTransform.gameObject.AddComponent<PathManager>();
             m_PathManager.Initialise(topRightScreenCorner.x);
 
-            gameDifficulty = GameDifficulty.Easy;
-            playerState = PlayerState.Alive;
-
-
-
-            StartCoroutine(Timer());
+            StartCoroutine(StartGame());
         }
 
         void Update()
@@ -137,7 +139,6 @@ namespace PenguinRun
             m_PlayerActionController = new PlayerInput();
             m_PlayerActionController.Action.Jump.performed += ctx => m_MainCharacter.Jump(true);
             m_PlayerActionController.Action.Jump.canceled += ctx => m_MainCharacter.Jump(false);
-
         }
 
         //Timer to set the player score
@@ -166,34 +167,6 @@ namespace PenguinRun
                     break;
             }
         }
-
-        private void SetGameElementsSpeed()
-        {
-            switch (m_CurrentDifficulty)
-            {
-                case GameDifficulty.Easy:
-                    m_EnvironmentManager.backgroundSpeed = EASY_SPEED;
-                    m_HazardsManager.hazardsSpeed = EASY_SPEED;
-                    m_PathManager.pathSpeed = EASY_SPEED;
-                    m_EffectManager.sunRaySpeed = EASY_SPEED;
-                    break;
-                case GameDifficulty.Medium:
-                    m_EnvironmentManager.backgroundSpeed = MEDIUM_SPEED;
-                    m_HazardsManager.hazardsSpeed = MEDIUM_SPEED;
-                    m_PathManager.pathSpeed = MEDIUM_SPEED;
-                    m_EffectManager.sunRaySpeed = MEDIUM_SPEED;
-
-                    break;
-                case GameDifficulty.Hard:
-                    m_EnvironmentManager.backgroundSpeed = HARD_SPEED;
-                    m_HazardsManager.hazardsSpeed = HARD_SPEED;
-                    m_PathManager.pathSpeed = HARD_SPEED;
-                    m_EffectManager.sunRaySpeed = HARD_SPEED;
-                    break;
-            }
-            m_EffectManager.SetSnowStormSpeed(m_CurrentDifficulty);
-        }
-
         //Check the actual score to increase difficulty level
         private void CheckScore()
         {
@@ -213,6 +186,24 @@ namespace PenguinRun
         {
             return m_EnvironmentManager.GetActiveCloud();
         }
+
+        private IEnumerator StartGame()
+        {
+            while (!m_EnvironmentManager.m_Ready || !m_PathManager.m_Ready)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+
+            playerState = PlayerState.Alive;
+            gameDifficulty = GameDifficulty.Easy;
+            StartCoroutine(Timer());
+
+            while (!m_MainCharacter.m_Ready)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            StartCoroutine(m_HazardsManager.SetNewHazard());
+        }
     
         private void EndGame()
         {
@@ -225,19 +216,43 @@ namespace PenguinRun
 
         public void Quit()
         {
-
+            Application.Quit();
         }
 
         public void Restart()
         {
-            
+            m_PathManager.Reset();
+            m_HazardsManager.Reset();
+            m_EnvironmentManager.Reset();
         }
 
         private void NotifyManagers()
         {
+            switch (m_CurrentDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    m_EnvironmentManager.IncreaseElementsSpeed(EASY_SPEED);
+                    m_HazardsManager.m_hazardsSpeed = HAZARD_EASY_SPEED;
+                    m_PathManager.IncreasePathsSpeed(EASY_SPEED);
+                    m_EffectManager.m_SunRaySpeed = EASY_SPEED;
+                    break;
+                case GameDifficulty.Medium:
+                    m_EnvironmentManager.IncreaseElementsSpeed(MEDIUM_SPEED);
+                    m_HazardsManager.IncreaseElementsSpeed(HAZARD_MEDIUM_SPEED);
+                    m_PathManager.IncreasePathsSpeed(MEDIUM_SPEED);
+                    m_EffectManager.m_SunRaySpeed = MEDIUM_SPEED;
+
+                    break;
+                case GameDifficulty.Hard:
+                    m_EnvironmentManager.IncreaseElementsSpeed(HARD_SPEED);
+                    m_HazardsManager.IncreaseElementsSpeed(HAZARD_HARD_SPEED);
+                    m_PathManager.IncreasePathsSpeed(HARD_SPEED);
+                    m_EffectManager.m_SunRaySpeed = HARD_SPEED;
+                    break;
+            }
+            m_EffectManager.SetSnowStormSpeed(m_CurrentDifficulty);
             m_MainCharacter.SetWalkSpeed();
             m_HazardsManager.SetHazardCount();
-            SetGameElementsSpeed();
             SetTimeRange();
         }
 

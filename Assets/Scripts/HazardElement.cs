@@ -25,5 +25,10 @@ namespace PenguinRun
             this.transform.position = startPos;
             m_NextPos = speed * this.transform.right;
         }
+
+        public void IncreaseSpeed(float speed)
+        {
+            m_NextPos = speed * this.transform.right;
+        }
     }
 }

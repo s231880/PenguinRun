@@ -11,29 +11,36 @@ namespace PenguinRun
         private const string PATH = "Path";
         private const int NUM_OF_PATH = 3;
         private const int NUM_OF_ELEMENTS = 10;
+        private const float OFFSET = 0.25f;
+        private const int STARTING_SPEED = 0;
+
         private PathElement m_LastElement;
         private Vector3 m_ElementsStartingPoint = Vector3.zero;
         private List<GameObject> m_PathList = new List<GameObject>();
         private List<PathElement> m_ActiveElements = new List<PathElement>();
         private float m_ElementLenght;
-        public float pathSpeed = 0;
-        private ObjectPoolManager m_Pool;
-        private const float OFFSET = 0.25f;
+         private ObjectPoolManager m_Pool;
 
+        private int m_PathToBeInitialised;
+        public float m_CurrentPathSpeed = 0;
+
+        public bool m_Ready = false;
+        public float m_PreviousElementSpeed = 0;
         private void Update()
         {
             UpdatePath();
         }
 
+        
         public void Initialise(float bottomRightScreenCornerX)
         {
             InitialiseElements();
             GenerateObjPool();
-            FindStartingPoint(bottomRightScreenCornerX);
-
-            StartCoroutine(InitialiseScene());
+            FindStartingPointAndPathToInitialise(bottomRightScreenCornerX);
+            SetupPath();
         }
-
+        //-----------------------------------------------------------------------
+        //Initialising functions
         private void GenerateObjPool()
         {
             var environmentParent = this.transform.Find("EnviromentsElements").transform;
@@ -62,7 +69,7 @@ namespace PenguinRun
             }
         }
 
-        private void FindStartingPoint(float bottomRightScreenCornerX)
+        private void FindStartingPointAndPathToInitialise(float bottomRightScreenCornerX)
         {
             var element = m_PathList[0];
 
@@ -73,33 +80,41 @@ namespace PenguinRun
 
             m_ElementsStartingPoint = element.transform.position;
             m_ElementsStartingPoint.x = bottomRightScreenCornerX + (m_ElementLenght / 2);
+
+            m_PathToBeInitialised = (int)(Screen.width / m_ElementLenght);
+ 
         }
 
-        IEnumerator InitialiseScene()
+        private void SetupPath()
         {
-            while (pathSpeed == 0)
+            Vector3 startingPoint = m_ElementsStartingPoint;
+            for (int i = 0; i < 4; ++i)  //Magic number to be changed
             {
-                yield return new WaitForEndOfFrame();
+                startingPoint.x -= (m_ElementLenght * i);
+                var element = m_Pool.GetObject().GetComponent<PathElement>();
+                element.Activate(startingPoint, STARTING_SPEED);
+                m_ActiveElements.Add(element);
+
+                if (i==0)
+                    m_LastElement = element;
             }
-
-            var element = m_Pool.GetObject().GetComponent<PathElement>();
-            element.Activate(m_ElementsStartingPoint, pathSpeed);
-            m_ActiveElements.Add(element);
-            m_LastElement = element;
-
-            Vector3 secondStartingPoint = m_ElementsStartingPoint;
-            secondStartingPoint.x -= m_ElementLenght;
-            var secondElement = m_Pool.GetObject().GetComponent<PathElement>();
-            secondElement.Activate(secondStartingPoint, pathSpeed);
-            m_ActiveElements.Add(secondElement);
-
-            Vector3 thirdStartingPoint = m_ElementsStartingPoint;
-            thirdStartingPoint.x -= m_ElementLenght * 2;
-            var thirdElement = m_Pool.GetObject().GetComponent<PathElement>();
-            thirdElement.Activate(thirdStartingPoint, pathSpeed);
-            m_ActiveElements.Add(thirdElement);
+            m_Ready = true;
         }
 
+        //-----------------------------------------------------------------------
+        //Increase the speed of the elements
+        public void IncreasePathsSpeed(float newSpeed)
+        {
+            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            {
+                m_CurrentPathSpeed = newSpeed;
+            }).Initialise(m_CurrentPathSpeed, newSpeed, (f) =>
+            {
+                foreach (var path in m_ActiveElements)
+                    path.IncreaseSpeed(f);
+            });
+        }
+        //-----------------------------------------------------------------------
         private void UpdatePath()
         {
             foreach (var path in m_ActiveElements)
@@ -112,7 +127,7 @@ namespace PenguinRun
                 }
             }
         }
-
+        
         private void ReturnElement(PathElement path)
         {
             m_Pool.ReturnObjectToThePool(path.gameObject);
@@ -124,9 +139,25 @@ namespace PenguinRun
             var element = m_Pool.GetObject().GetComponent<PathElement>();
             Vector3 pos = m_LastElement.transform.position;
             pos.x += m_ElementLenght;
-            element.Activate(pos, pathSpeed);
+            element.Activate(pos, m_CurrentPathSpeed);
             m_ActiveElements.Add(element);
             m_LastElement = element;
         }
+        //-----------------------------------------------------------------------
+        //Clear all and prepare for restart
+        public void Reset()
+        {
+            m_Ready = false;
+            if (m_ActiveElements.Count != 0)
+            {
+                foreach (var path in m_ActiveElements)
+                    m_Pool.ReturnObjectToThePool(path.gameObject);
+
+                m_ActiveElements.Clear();
+            }
+            SetupPath();
+
+        }
+        //-----------------------------------------------------------------------
     }
 }
