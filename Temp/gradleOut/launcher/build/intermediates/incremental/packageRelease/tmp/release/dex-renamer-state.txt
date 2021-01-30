@@ -1,4 +1,0 @@
-#Sun Jan 24 12:21:46 GMT 2021
-base.0=D\:\\PersonalUnityProjects\\PenguinRun\\Temp\\gradleOut\\launcher\\build\\intermediates\\dex\\release\\out\\classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

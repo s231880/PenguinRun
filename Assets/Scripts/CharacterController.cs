@@ -22,9 +22,19 @@ namespace PenguinRun
             m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
+        private void Update()
+        {
+            Debug.LogError($"{m_Animator.GetBool("isJumping")}");
+        }
+
         public void Jump(bool state)
         {
             m_Animator.SetBool("isJumping", state);
+        }
+
+        public void JumpDone(bool state)
+        {
+            m_Animator.SetBool("isJumping", !state);
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -32,7 +42,6 @@ namespace PenguinRun
             if (collision.gameObject.tag == "Hazard")
             {
                 //GameController.Instance.playerState = PlayerState.Dead;
-                Debug.LogError("DEAD");
             }
         }
 
