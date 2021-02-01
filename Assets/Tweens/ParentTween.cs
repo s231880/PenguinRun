@@ -16,7 +16,11 @@ public class ParentTween : Tween
         m_Transform.localPosition = Vector3.LerpUnclamped(m_StartPosition, m_EndPosition, t);
     }
 
-    public void Initialise() { Initialise(Quaternion.identity); }
+    public void Initialise()
+    {
+        Initialise(Quaternion.identity);
+    }
+
     public void Initialise(Quaternion offset)
     {
         m_Transform = transform;

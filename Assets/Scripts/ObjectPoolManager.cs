@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class ObjectPoolManager : MonoBehaviour
@@ -15,14 +13,14 @@ public class ObjectPoolManager : MonoBehaviour
         m_ActiveElementsTransform = activeElementsParten;
         foreach (var cachedObj in cachedObjList)
         {
-           for (int i = 0; i < amountPerType; i++)
+            for (int i = 0; i < amountPerType; i++)
             {
                 var obj = Object.Instantiate(cachedObj);
                 obj.name = cachedObj.name /*+ i*/;
                 obj.transform.localScale = new Vector3(1, 1, 1);
                 obj.transform.SetParent(m_ObjectPoolParent);
                 m_Objects.Add(obj);
-           }
+            }
         }
         ShuffleDisablePoolElements();
     }
@@ -41,7 +39,8 @@ public class ObjectPoolManager : MonoBehaviour
         }
         ShuffleDisablePoolElements();
     }
-    public  void ReturnObjectToThePool(GameObject obj, bool initialise = false)
+
+    public void ReturnObjectToThePool(GameObject obj, bool initialise = false)
     {
         obj.transform.SetParent(m_ObjectPoolParent);
         obj.SetActive(initialise);

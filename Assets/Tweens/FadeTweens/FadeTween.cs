@@ -18,6 +18,7 @@ public abstract class FadeTween<T> : Tween where T : Object
     protected abstract List<T> GetObjects();
 
     protected abstract void SetAlpha(T obj, float alpha);
+
     protected abstract float GetAlpha(T obj);
 
     protected override void OnStep(float t)

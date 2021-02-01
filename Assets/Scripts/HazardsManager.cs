@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//Some things could have be done differently, for example the width, start and end positions could have 
+//Some things could have be done differently, for example the width, start and end positions could have
 //been set as private/public variable into the hazard script instead of been store into a dictionary here
 //I'll change them in future
 namespace PenguinRun
@@ -20,19 +20,21 @@ namespace PenguinRun
         TripleLowBird
     }
 
-
     public class HazardsManager : MonoBehaviour
     {
         private Dictionary<string, GameObject> m_HazardPrefabDictionary = new Dictionary<string, GameObject>();
+
         private List<string> m_HazardListKeys = new List<string>
         {
             FIRE,
             BIRD
         };
+
         //-------------------------------------------------------------------------------
         //Item containers => to get and return elements during the gameplay
         private Dictionary<string, ObjectPoolManager> m_ObjPoolsDictionary = new Dictionary<string, ObjectPoolManager>();
-        private Dictionary<string, List<HazardElement>> m_ActiveHazardsDictionary = new Dictionary<string, List <HazardElement>>();
+
+        private Dictionary<string, List<HazardElement>> m_ActiveHazardsDictionary = new Dictionary<string, List<HazardElement>>();
         private Dictionary<string, List<HazardElement>> m_ElementsToBeRemovedDictionary = new Dictionary<string, List<HazardElement>>();
         private Dictionary<string, float> m_HazardsEndX = new Dictionary<string, float>();
         private Dictionary<string, Vector3> m_HazardsStartPos = new Dictionary<string, Vector3>();
@@ -40,17 +42,21 @@ namespace PenguinRun
         //-------------------------------------------------------------------------------
         //Constant variables
         private const int EASY_HAZARDS = 3;
+
         private const int MEDIUM_HAZARDS = 7;
         private const int HARD_HAZARDS = 9;
         private const int HIGH_BIRD_MULTIPLIER_CONST = 7;
         private const int NUM_OF_HAZARDS_PER_TYPE = 5;
         private const string FIRE = "Fire";
         private const string BIRD = "Bird";
+        private const float HAZARD_EASY_SPEED = 0.08f;
+        private const float HAZARD_MEDIUM_SPEED = 0.3f;
+        private const float HAZARD_HARD_SPEED = 0.6f;
         //-------------------------------------------------------------------------------
 
         private int m_HazardsCount;
         private float m_HazardBreak = 0;
-        public float m_hazardsSpeed = 0;
+        public float m_hazardsSpeed = HAZARD_EASY_SPEED;
         public bool m_Ready = false;
 
         private Vector3 m_PenguinPosition = new Vector3();
@@ -60,6 +66,7 @@ namespace PenguinRun
         //-------------------------------------------------------------------------------
 
         private HazardType m_CurrentHazard;
+
         public HazardType currentHazard
         {
             get { return m_CurrentHazard; }
@@ -70,7 +77,14 @@ namespace PenguinRun
             }
         }
 
+        //-----------------------------------------------------------------------
+        private void Update()
+        {
+            UpdateHazards();
+        }
 
+        //-----------------------------------------------------------------------
+        //Initialising functions
         public void Initialise(Vector3 penguinPosition, float penguinWidth, float bottomRightScreenCornerX)
         {
             m_PenguinPosition = penguinPosition;
@@ -83,13 +97,6 @@ namespace PenguinRun
             InitialiseHazardsKeyPositions(bottomRightScreenCornerX);
         }
 
-        void Update()
-        {
-            UpdateHazards();
-        }
-
-        //-----------------------------------------------------------------------
-        //Initialising functions 
         private void InitialiseVariables()
         {
             //Initialising container to get and return elements
@@ -121,7 +128,7 @@ namespace PenguinRun
             //Finding the transforms where store the elements
             var environmentParent = this.transform.Find("EnviromentsElements").transform;
             var oPParentTransform = environmentParent.Find("ObjectPools").transform;
-            Transform activeObjectsTransform = environmentParent.Find("ActiveElements").transform;         
+            Transform activeObjectsTransform = environmentParent.Find("ActiveElements").transform;
 
             foreach (var key in m_HazardListKeys)
             {
@@ -137,7 +144,7 @@ namespace PenguinRun
         }
 
         //-----------------------------------------------------------------------
-        //Function to set the elements starting pos. I've set variables through this approach 
+        //Function to set the elements starting pos. I've set variables through this approach
         //because I took into account that differnt devices have diffenrent screen width
         private void InitialiseHazardsKeyPositions(float bottomRightScreenCornerX)
         {
@@ -160,16 +167,19 @@ namespace PenguinRun
                     m_HazardsCount = EASY_HAZARDS;
                     m_HazardBreak = 6;
                     break;
+
                 case GameDifficulty.Medium:
                     m_HazardsCount = MEDIUM_HAZARDS;
                     m_HazardBreak = 4;
                     break;
+
                 case GameDifficulty.Hard:
                     m_HazardsCount = HARD_HAZARDS;
                     m_HazardBreak = 3;
                     break;
             }
         }
+
         //-----------------------------------------------------------------------
         //Set new random hazard to be activated
         public IEnumerator SetNewHazard()
@@ -186,30 +196,39 @@ namespace PenguinRun
                 case HazardType.SingleFire:
                     ActivateSingleHazard(FIRE);
                     break;
+
                 case HazardType.LowBird:
                     ActivateSingleHazard(BIRD);
                     break;
+
                 case HazardType.HighBird:
                     ActivateSingleHazard(BIRD, true);
                     break;
+
                 case HazardType.DoubleCloseFires:
                     ActivateMultipleHazard(FIRE, 2);
                     break;
+
                 case HazardType.DoubleDistantFires:
                     ActivateMultipleHazard(FIRE, 2, false);
                     break;
+
                 case HazardType.DoubleHighBird:
                     ActivateMultipleHazard(BIRD, 2, false, true);
                     break;
+
                 case HazardType.DoubleLowBird:
                     ActivateMultipleHazard(BIRD, 2, false, false);
                     break;
+
                 case HazardType.TripleDistantFires:
                     ActivateMultipleHazard(FIRE, 3, false);
                     break;
+
                 case HazardType.TripleLowBird:
                     ActivateMultipleHazard(BIRD, 3, false, true);
                     break;
+
                 default:
                     break;
             }
@@ -232,11 +251,11 @@ namespace PenguinRun
             }
         }
 
-        private void ActivateMultipleHazard(string type, int count, bool close = true ,bool highBird = false)
+        private void ActivateMultipleHazard(string type, int count, bool close = true, bool highBird = false)
         {
             HazardElement hazard;
             Vector3 startingPos;
-            
+
             for (int i = 0; i < count; ++i)
             {
                 startingPos = m_HazardsStartPos[type];
@@ -253,7 +272,6 @@ namespace PenguinRun
                 }
             }
         }
-
 
         private void UpdateHazards()
         {
@@ -289,7 +307,7 @@ namespace PenguinRun
                     {
                         foreach (var hazard in activeElementList)
                         {
-                            //If the element has passed the penguin a new hazard is generated and the element is moved into 
+                            //If the element has passed the penguin a new hazard is generated and the element is moved into
                             //another list, ready to be removed once it goes out of screen
                             if (hazard.transform.position.x < m_PenguinPosition.x)
                             {
@@ -306,7 +324,7 @@ namespace PenguinRun
                         foreach (var hazard in toBeRemovedElementList)
                         {
                             //if true, the element is out of screen
-                            if (hazard.transform.position.x < m_HazardsEndX[key]) 
+                            if (hazard.transform.position.x < m_HazardsEndX[key])
                             {
                                 //Return the object to the obj pool and remove it from the list
                                 m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
@@ -318,10 +336,27 @@ namespace PenguinRun
                 }
             }
         }
+
         //-----------------------------------------------------------------------
         //Increase hazard speed when the game diffult is increased
-        public void IncreaseElementsSpeed(float newSpeed)
+        public void IncreaseElementsSpeed()
         {
+            float newSpeed = 0;
+            switch (GameController.Instance.gameDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    newSpeed = HAZARD_EASY_SPEED;
+                    break;
+
+                case GameDifficulty.Medium:
+                    newSpeed = HAZARD_MEDIUM_SPEED;
+                    break;
+
+                case GameDifficulty.Hard:
+                    newSpeed = HAZARD_HARD_SPEED;
+                    break;
+            }
+
             this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
             {
                 m_hazardsSpeed = newSpeed;
@@ -346,7 +381,7 @@ namespace PenguinRun
         }
 
         //-----------------------------------------------------------------------
-        //Reset Manager
+        //Reset Manager when game ends
         public void Reset()
         {
             m_Ready = false;
@@ -367,6 +402,19 @@ namespace PenguinRun
                         m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
 
                     toBeRemovedElementList.Clear();
+                }
+            }
+        }
+
+        public void Stop()
+        {
+            foreach (var key in m_HazardListKeys)
+            {
+                List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];
+                if (activeElementList.Count != 0)
+                {
+                    foreach (var hazard in activeElementList)
+                        hazard.Stop();
                 }
             }
         }

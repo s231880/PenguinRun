@@ -6,8 +6,8 @@ public class SpriteColourTween : ColourTween<SpriteRenderer>
     //protected override List<SpriteRenderer> GetObjects()
     //{
     //    //return GetComponentsInChildren<SpriteRenderer>().ToList();
-    //}    
-    
+    //}
+
     protected override List<SpriteRenderer> GetObjects()
     {
         //return GetComponentsInChildren<SpriteRenderer>().ToList();

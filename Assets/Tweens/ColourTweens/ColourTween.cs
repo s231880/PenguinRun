@@ -6,7 +6,7 @@ public abstract class ColourTween<T> : Tween where T : UnityEngine.Object
     private List<T> m_Objects;
     private List<Color> m_Start;
     private Color m_Target;
-    
+
     private void Awake()
     {
         m_Objects = GetObjects();
@@ -16,6 +16,7 @@ public abstract class ColourTween<T> : Tween where T : UnityEngine.Object
     protected abstract List<T> GetObjects();
 
     protected abstract void SetColour(T obj, Color alpha);
+
     protected abstract Color GetColour(T obj);
 
     protected override void OnStep(float t)

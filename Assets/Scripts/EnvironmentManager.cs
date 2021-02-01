@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 //This script controls the background element such as Mountains, Icebergs and clouds
@@ -17,17 +16,22 @@ namespace PenguinRun
         private float m_BottomRightScreenCornerX;
         private const int NUM_OF_ELEMENT_PER_TYPE = 10;
         public bool m_Ready = false;
+        public bool m_IsPlayerAlive = true;
+
         //-----------------------------------------------------------------------
         //Object Pools & List used to manage the activation/disactivation
         private const string MOUNTAIN = "Mountain";
+
         private const string ICEBERG = "Iceberg";
         private const string CLOUD = "Cloud";
+
         private List<string> m_ElementsKeys = new List<string>
         {
             MOUNTAIN,
             ICEBERG,
             CLOUD
         };
+
         private Dictionary<string, ObjectPoolManager> m_PoolsDictionary = new Dictionary<string, ObjectPoolManager>();
         private Dictionary<string, List<EnvironmentElement>> m_ActiveElementsDictionary = new Dictionary<string, List<EnvironmentElement>>();
         private Dictionary<string, List<EnvironmentElement>> m_ElementsToBeRemovedDictionary = new Dictionary<string, List<EnvironmentElement>>();
@@ -38,11 +42,14 @@ namespace PenguinRun
         //Speed variables  & constants
 
         public float m_ElementsSpeed = 0;
+
         //-----------------------------------------------------------------------
-        void Update()
+        private void Update()
         {
-            UpdateEnvironment();
+            if (m_IsPlayerAlive)
+                UpdateEnvironment();
         }
+
         //-----------------------------------------------------------------------
         //Initialisation Functions
         public void Initialise(float bottomRightScreenCornerX)
@@ -66,9 +73,11 @@ namespace PenguinRun
                     case MOUNTAIN:
                         count = NUM_OF_MOUNTAIN_SPRITES;
                         break;
+
                     case ICEBERG:
                         count = NUM_OF_ICEBERG_SPRITES;
                         break;
+
                     case CLOUD:
                         count = NUM_OF_CLOUD_SPRITES;
                         break;
@@ -94,7 +103,7 @@ namespace PenguinRun
         {
             var environmentParent = this.transform.Find("EnviromentsElements").transform;
             var oPParentTransform = environmentParent.Find("ObjectPools").transform;
-            Transform  activeObjectsTransform = environmentParent.Find("ActiveElements").transform;
+            Transform activeObjectsTransform = environmentParent.Find("ActiveElements").transform;
 
             foreach (var key in m_ElementsKeys)
             {
@@ -121,7 +130,10 @@ namespace PenguinRun
                     element.Activate(m_ElementsSpeed, startingPos);
                     m_ActiveElementsDictionary[key].Add(element);
                     posBeforeActivateNewElement = (m_BottomRightScreenCornerX * 2) - m_ElementsStartingPointsDictionary[key][element.name].x + GetRandomValue();
-                    m_DistanceBeforeGenerateNewElement.Add(key, posBeforeActivateNewElement);
+                    if (m_DistanceBeforeGenerateNewElement.ContainsKey(key) == false)
+                        m_DistanceBeforeGenerateNewElement.Add(key, posBeforeActivateNewElement);
+                    else
+                        m_DistanceBeforeGenerateNewElement[key] = posBeforeActivateNewElement;
                 }
             }
             m_Ready = true;
@@ -141,12 +153,12 @@ namespace PenguinRun
             foreach (string key in m_ElementsKeys)
             {
                 var elementList = m_ElementsDictionary[key];
-                Dictionary<string, Vector3> elementStartingPoint = new Dictionary<string, Vector3>(); 
+                Dictionary<string, Vector3> elementStartingPoint = new Dictionary<string, Vector3>();
                 foreach (var element in elementList)
                 {
                     float lenght = GetElementLenght(element);
                     elementStartingPos = element.transform.position;
-                    elementStartingPos.x  = m_BottomRightScreenCornerX + (lenght / 2);
+                    elementStartingPos.x = m_BottomRightScreenCornerX + (lenght / 2);
 
                     elementStartingPoint.Add(element.name, elementStartingPos);
                 }
@@ -162,7 +174,7 @@ namespace PenguinRun
             Vector3 startingPos = m_ElementsStartingPointsDictionary[elementType][element.name];
             if (element != null)
             {
-                if (elementType!= CLOUD)
+                if (elementType != CLOUD)
                     element.Activate(m_ElementsSpeed, startingPos);
                 else
                     element.Activate(m_ElementsSpeed, startingPos);
@@ -177,7 +189,8 @@ namespace PenguinRun
         {
             m_PoolsDictionary[elementType].ReturnObjectToThePool(element.gameObject);
             m_ActiveElementsDictionary[elementType].Remove(element);
-        } 
+        }
+
         //-----------------------------------------------------------------------
         //Manage the environment => once an element is out of scene is returned to the pool and a new one is activated
         private void UpdateEnvironment()
@@ -185,7 +198,7 @@ namespace PenguinRun
             foreach (var key in m_ElementsKeys)
             {
                 var activeElements = m_ActiveElementsDictionary[key];
-                if(activeElements.Count != 0)
+                if (activeElements.Count != 0)
                 {
                     foreach (var element in activeElements)
                     {
@@ -197,7 +210,6 @@ namespace PenguinRun
                             break;
                         }
                     }
-                    
                 }
 
                 var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
@@ -215,6 +227,7 @@ namespace PenguinRun
                 }
             }
         }
+
         //-----------------------------------------------------------------------
         //Get and return elements to the object pools
         private float GetRandomValue()
@@ -222,23 +235,40 @@ namespace PenguinRun
             float randomVal = Random.Range(-m_BottomRightScreenCornerX, m_BottomRightScreenCornerX);
             return randomVal;
         }
+
         //-----------------------------------------------------------------------
         //Get a cloud to the environment manager to activate the thunder effect
         public ParticleSystem GetActiveCloud()
         {
             var list = m_ActiveElementsDictionary[CLOUD];
 
-           foreach(var cloud in list)
-           { 
+            foreach (var cloud in list)
+            {
                 if (cloud.transform.position.x > 0)
                     return cloud.GetComponentInChildren<ParticleSystem>();
-           }
+            }
             return null;
         }
+
         //-----------------------------------------------------------------------
-        //Increase elements speed when the game diffult is increased
-        public void IncreaseElementsSpeed(float newSpeed)
+        //Increase elements speed when the game diffult is increased or game is started
+        public void IncreaseElementsSpeed(/*float newSpeed*/)
         {
+            float newSpeed = 0;
+            switch (GameController.Instance.gameDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    newSpeed = GameController.Instance.EASY_SPEED;
+                    break;
+
+                case GameDifficulty.Medium:
+                    newSpeed = GameController.Instance.MEDIUM_SPEED;
+                    break;
+
+                case GameDifficulty.Hard:
+                    newSpeed = GameController.Instance.HARD_SPEED;
+                    break;
+            }
             this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
             {
                 m_ElementsSpeed = newSpeed;
@@ -256,12 +286,14 @@ namespace PenguinRun
                     if (elementsToBeRemoved.Count != 0)
                     {
                         foreach (var element in elementsToBeRemoved)
-                            element.IncreaseSpeed(f); 
+                            element.IncreaseSpeed(f);
                     }
                 }
             });
         }
 
+        //-----------------------------------------------------------------------
+        //Reset element when restart the game
         public void Reset()
         {
             m_Ready = false;
@@ -285,8 +317,31 @@ namespace PenguinRun
                     elementsToBeRemoved.Clear();
                 }
             }
+            m_IsPlayerAlive = true;
             SetupBackground();
+        }
+
+        //-----------------------------------------------------------------------
+        //Stop the elements when the player is dead
+        public void Stop()
+        {
+            m_IsPlayerAlive = false;
+            foreach (var key in m_ElementsKeys)
+            {
+                var activeElements = m_ActiveElementsDictionary[key];
+                if (activeElements.Count != 0)
+                {
+                    foreach (var element in activeElements)
+                        element.Stop();
+                }
+
+                var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
+                if (elementsToBeRemoved.Count != 0)
+                {
+                    foreach (var element in elementsToBeRemoved)
+                        element.Stop();
+                }
+            }
         }
     }
 }
-

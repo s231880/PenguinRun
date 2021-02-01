@@ -9,6 +9,7 @@ using UnityEngine.InputSystem.Utilities;
 public class @PlayerActionController : IInputActionCollection, IDisposable
 {
     public InputActionAsset asset { get; }
+
     public @PlayerActionController()
     {
         asset = InputActionAsset.FromJson(@"{
@@ -95,18 +96,43 @@ public class @PlayerActionController : IInputActionCollection, IDisposable
 
     // Jump
     private readonly InputActionMap m_Jump;
+
     private IJumpActions m_JumpActionsCallbackInterface;
     private readonly InputAction m_Jump_Jump;
+
     public struct JumpActions
     {
         private @PlayerActionController m_Wrapper;
-        public JumpActions(@PlayerActionController wrapper) { m_Wrapper = wrapper; }
+
+        public JumpActions(@PlayerActionController wrapper)
+        {
+            m_Wrapper = wrapper;
+        }
+
         public InputAction @Jump => m_Wrapper.m_Jump_Jump;
-        public InputActionMap Get() { return m_Wrapper.m_Jump; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
+
+        public InputActionMap Get()
+        {
+            return m_Wrapper.m_Jump;
+        }
+
+        public void Enable()
+        {
+            Get().Enable();
+        }
+
+        public void Disable()
+        {
+            Get().Disable();
+        }
+
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(JumpActions set) { return set.Get(); }
+
+        public static implicit operator InputActionMap(JumpActions set)
+        {
+            return set.Get();
+        }
+
         public void SetCallbacks(IJumpActions instance)
         {
             if (m_Wrapper.m_JumpActionsCallbackInterface != null)
@@ -124,7 +150,9 @@ public class @PlayerActionController : IInputActionCollection, IDisposable
             }
         }
     }
+
     public JumpActions @Jump => new JumpActions(this);
+
     public interface IJumpActions
     {
         void OnJump(InputAction.CallbackContext context);

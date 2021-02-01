@@ -9,6 +9,7 @@ using UnityEngine.InputSystem.Utilities;
 public class @PlayerInput : IInputActionCollection, IDisposable
 {
     public InputActionAsset asset { get; }
+
     public @PlayerInput()
     {
         asset = InputActionAsset.FromJson(@"{
@@ -106,18 +107,43 @@ public class @PlayerInput : IInputActionCollection, IDisposable
 
     // Action
     private readonly InputActionMap m_Action;
+
     private IActionActions m_ActionActionsCallbackInterface;
     private readonly InputAction m_Action_Jump;
+
     public struct ActionActions
     {
         private @PlayerInput m_Wrapper;
-        public ActionActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+
+        public ActionActions(@PlayerInput wrapper)
+        {
+            m_Wrapper = wrapper;
+        }
+
         public InputAction @Jump => m_Wrapper.m_Action_Jump;
-        public InputActionMap Get() { return m_Wrapper.m_Action; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
+
+        public InputActionMap Get()
+        {
+            return m_Wrapper.m_Action;
+        }
+
+        public void Enable()
+        {
+            Get().Enable();
+        }
+
+        public void Disable()
+        {
+            Get().Disable();
+        }
+
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(ActionActions set) { return set.Get(); }
+
+        public static implicit operator InputActionMap(ActionActions set)
+        {
+            return set.Get();
+        }
+
         public void SetCallbacks(IActionActions instance)
         {
             if (m_Wrapper.m_ActionActionsCallbackInterface != null)
@@ -135,7 +161,9 @@ public class @PlayerInput : IInputActionCollection, IDisposable
             }
         }
     }
+
     public ActionActions @Action => new ActionActions(this);
+
     public interface IActionActions
     {
         void OnJump(InputAction.CallbackContext context);

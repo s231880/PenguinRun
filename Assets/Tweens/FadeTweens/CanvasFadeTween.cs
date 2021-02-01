@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using UnityEngine.UI;
 using System.Linq;
+using UnityEngine.UI;
 
 public class CanvasFadeTween : FadeTween<Graphic>
 {

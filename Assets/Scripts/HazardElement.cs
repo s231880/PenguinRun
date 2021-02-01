@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace PenguinRun
 {
@@ -8,9 +6,11 @@ namespace PenguinRun
     {
         private Vector3 m_NextPos = Vector3.zero;
 
-        public void Initialise(){ }
+        public void Initialise()
+        {
+        }
 
-        void Update()
+        private void Update()
         {
             Move();
         }
@@ -29,6 +29,11 @@ namespace PenguinRun
         public void IncreaseSpeed(float speed)
         {
             m_NextPos = speed * this.transform.right;
+        }
+
+        public void Stop()
+        {
+            m_NextPos = Vector3.zero;
         }
     }
 }
