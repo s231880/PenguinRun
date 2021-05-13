@@ -1,6 +1,10 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+
+//THE GAME IS STILL WIP. THE HAZARD AND BACKGROUND SPEEDS ARE ODD, I'LL HAVE A LOOK BEFORE CLOSE THE PROJECT
+//FOR THE MOMENT I'VE DISABLED THE CARACTHER COLLISION WITH THE HAZARDS
+
 namespace PenguinRun
 {
     public enum GameDifficulty
