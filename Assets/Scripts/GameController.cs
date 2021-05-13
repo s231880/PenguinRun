@@ -31,7 +31,6 @@ namespace PenguinRun
         }
 
         private PlayerState m_PlayerState;
-
         public PlayerState playerState
         {
             get { return m_PlayerState; }
@@ -66,10 +65,9 @@ namespace PenguinRun
         //----------------------------------------------------------------
         //Score thresholds to change difficult
         private const int MEDIUM_THRESHOLD = 100;
-
         private const int HARD_THRESHOLD = 200;
 
-        public float EASY_SPEED = 0.04f;
+        public float EASY_SPEED = 0.002f;
         public float MEDIUM_SPEED = 0.15f;
         public float HARD_SPEED = 0.3f;
 

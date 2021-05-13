@@ -49,7 +49,7 @@ namespace PenguinRun
         private const int NUM_OF_HAZARDS_PER_TYPE = 5;
         private const string FIRE = "Fire";
         private const string BIRD = "Bird";
-        private const float HAZARD_EASY_SPEED = 0.08f;
+        private const float HAZARD_EASY_SPEED = 0.04f;
         private const float HAZARD_MEDIUM_SPEED = 0.3f;
         private const float HAZARD_HARD_SPEED = 0.6f;
         //-------------------------------------------------------------------------------

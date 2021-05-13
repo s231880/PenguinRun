@@ -28,7 +28,7 @@ namespace PenguinRun
         {
             if (collision.gameObject.tag == "Hazard")
             {
-                GameController.Instance.playerState = PlayerState.Dead;
+                //GameController.Instance.playerState = PlayerState.Dead;
             }
         }
 
