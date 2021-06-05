@@ -15,13 +15,11 @@ namespace PenguinRun
         private const int NUM_OF_CLOUD_SPRITES = 3;
         private float m_BottomRightScreenCornerX;
         private const int NUM_OF_ELEMENT_PER_TYPE = 10;
-        public bool m_Ready = false;
-        public bool m_IsPlayerAlive = true;
+
 
         //-----------------------------------------------------------------------
         //Object Pools & List used to manage the activation/disactivation
         private const string MOUNTAIN = "Mountain";
-
         private const string ICEBERG = "Iceberg";
         private const string CLOUD = "Cloud";
 
@@ -46,7 +44,7 @@ namespace PenguinRun
         //-----------------------------------------------------------------------
         private void Update()
         {
-            if (m_IsPlayerAlive)
+            if (GameController.Instance.CurrentState == GameState.Play)
                 UpdateEnvironment();
         }
 
@@ -60,7 +58,7 @@ namespace PenguinRun
             InitialiseObjectPools();
 
             //Used a coroutine to manage time synchronisation with GameController
-            SetupBackground();
+            //SetupBackground();
         }
 
         private void InitialiseElements()
@@ -117,7 +115,7 @@ namespace PenguinRun
             }
         }
 
-        private void SetupBackground()
+        public void SetupBackground()
         {
             foreach (var key in m_ElementsKeys)
             {
@@ -136,7 +134,6 @@ namespace PenguinRun
                         m_DistanceBeforeGenerateNewElement[key] = posBeforeActivateNewElement;
                 }
             }
-            m_Ready = true;
         }
 
         private float GetElementLenght(GameObject obj)
@@ -252,23 +249,8 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Increase elements speed when the game diffult is increased or game is started
-        public void IncreaseElementsSpeed(/*float newSpeed*/)
+        public void IncreaseElementsSpeed(float newSpeed)
         {
-            float newSpeed = 0;
-            switch (GameController.Instance.gameDifficulty)
-            {
-                case GameDifficulty.Easy:
-                    newSpeed = GameController.Instance.EASY_SPEED;
-                    break;
-
-                case GameDifficulty.Medium:
-                    newSpeed = GameController.Instance.MEDIUM_SPEED;
-                    break;
-
-                case GameDifficulty.Hard:
-                    newSpeed = GameController.Instance.HARD_SPEED;
-                    break;
-            }
             this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
             {
                 m_ElementsSpeed = newSpeed;
@@ -293,10 +275,10 @@ namespace PenguinRun
         }
 
         //-----------------------------------------------------------------------
-        //Reset element when restart the game
-        public void Reset()
+        //Clear the background 
+        public void ClearBackgorund()
         {
-            m_Ready = false;
+            //m_Ready = false;
             foreach (var key in m_ElementsKeys)
             {
                 var activeElements = m_ActiveElementsDictionary[key];
@@ -317,15 +299,15 @@ namespace PenguinRun
                     elementsToBeRemoved.Clear();
                 }
             }
-            m_IsPlayerAlive = true;
-            SetupBackground();
+            //m_IsPlayerAlive = true;
+            //SetupBackground();
         }
 
         //-----------------------------------------------------------------------
         //Stop the elements when the player is dead
         public void Stop()
         {
-            m_IsPlayerAlive = false;
+            //m_IsPlayerAlive = false;
             foreach (var key in m_ElementsKeys)
             {
                 var activeElements = m_ActiveElementsDictionary[key];

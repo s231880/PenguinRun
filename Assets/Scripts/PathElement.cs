@@ -15,7 +15,7 @@ public class PathElement : MonoBehaviour
 
     private void Move()
     {
-        this.transform.localPosition -= m_NextPos;
+        this.transform.localPosition -= m_NextPos * Time.deltaTime;
     }
 
     public void Activate(Vector3 startPos, float speed)

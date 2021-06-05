@@ -34,7 +34,7 @@ namespace PenguinRun
 
         public void SetWalkSpeed()
         {
-            switch (GameController.Instance.gameDifficulty)
+            switch (GameController.Instance.CurrentDifficulty)
             {
                 case GameDifficulty.Easy:
                     IncrementWalkSpeed(EASY_WALK_SPEED);

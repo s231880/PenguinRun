@@ -49,15 +49,11 @@ namespace PenguinRun
         private const int NUM_OF_HAZARDS_PER_TYPE = 5;
         private const string FIRE = "Fire";
         private const string BIRD = "Bird";
-        private const float HAZARD_EASY_SPEED = 0.04f;
-        private const float HAZARD_MEDIUM_SPEED = 0.3f;
-        private const float HAZARD_HARD_SPEED = 0.6f;
         //-------------------------------------------------------------------------------
 
         private int m_HazardsCount;
         private float m_HazardBreak = 0;
-        public float m_hazardsSpeed = HAZARD_EASY_SPEED;
-        public bool m_Ready = false;
+        [SerializeField]private float m_HazardsSpeed = 0f/* = HAZARD_EASY_SPEED*/;
 
         private Vector3 m_PenguinPosition = new Vector3();
         private float m_PenguinWidth = 0;
@@ -67,7 +63,7 @@ namespace PenguinRun
 
         private HazardType m_CurrentHazard;
 
-        public HazardType currentHazard
+        public HazardType CurrentHazard
         {
             get { return m_CurrentHazard; }
             set
@@ -80,7 +76,8 @@ namespace PenguinRun
         //-----------------------------------------------------------------------
         private void Update()
         {
-            UpdateHazards();
+            if(GameController.Instance.CurrentState == GameState.Play)
+                UpdateHazards();
         }
 
         //-----------------------------------------------------------------------
@@ -140,7 +137,6 @@ namespace PenguinRun
                 objPool.CreateObjPool(m_HazardPrefabDictionary[key], NUM_OF_HAZARDS_PER_TYPE, pool.transform, activeHazards.transform);
                 m_ObjPoolsDictionary.Add(key, objPool);
             }
-            m_Ready = true;
         }
 
         //-----------------------------------------------------------------------
@@ -161,7 +157,7 @@ namespace PenguinRun
         //Set different types of hazard according to the difficulty
         public void SetHazardCount()
         {
-            switch (GameController.Instance.gameDifficulty)
+            switch (GameController.Instance.CurrentDifficulty)
             {
                 case GameDifficulty.Easy:
                     m_HazardsCount = EASY_HAZARDS;
@@ -186,7 +182,7 @@ namespace PenguinRun
         {
             float time = Random.Range(0, m_HazardBreak);
             yield return new WaitForSeconds(time);
-            currentHazard = (HazardType)Random.Range(0, m_HazardsCount);
+            CurrentHazard = (HazardType)Random.Range(0, m_HazardsCount);
         }
 
         private void GetHazard()
@@ -246,7 +242,7 @@ namespace PenguinRun
                     startingPos.y *= HIGH_BIRD_MULTIPLIER_CONST;
                 }
 
-                hazard.Activate(startingPos, m_hazardsSpeed);
+                hazard.Activate(startingPos, m_HazardsSpeed);
                 m_ActiveHazardsDictionary[type].Add(hazard);
             }
         }
@@ -267,7 +263,7 @@ namespace PenguinRun
                     else
                         startingPos.x += m_PenguinWidth * i;
 
-                    hazard.Activate(startingPos, m_hazardsSpeed);
+                    hazard.Activate(startingPos, m_HazardsSpeed);
                     m_ActiveHazardsDictionary[type].Add(hazard);
                 }
             }
@@ -277,7 +273,7 @@ namespace PenguinRun
         {
             foreach (var key in m_HazardListKeys)
             {
-                if (GameController.Instance.gameDifficulty == GameDifficulty.Easy)
+                if (GameController.Instance.CurrentDifficulty == GameDifficulty.Easy)
                 {
                     List<HazardElement> list = m_ActiveHazardsDictionary[key];
                     if (list.Count != 0)
@@ -339,52 +335,52 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Increase hazard speed when the game diffult is increased
-        public void IncreaseElementsSpeed()
+        public void IncreaseElementsSpeed(float newSpeed)
         {
-            float newSpeed = 0;
-            switch (GameController.Instance.gameDifficulty)
+            if(m_HazardsSpeed != 0)
             {
-                case GameDifficulty.Easy:
-                    newSpeed = HAZARD_EASY_SPEED;
-                    break;
-
-                case GameDifficulty.Medium:
-                    newSpeed = HAZARD_MEDIUM_SPEED;
-                    break;
-
-                case GameDifficulty.Hard:
-                    newSpeed = HAZARD_HARD_SPEED;
-                    break;
+                this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+                {
+                    m_HazardsSpeed = newSpeed;
+                }).Initialise(m_HazardsSpeed, newSpeed, (f) =>
+                {
+                    foreach (var key in m_HazardListKeys)
+                    {
+                        var activeElements = m_ActiveHazardsDictionary[key];
+                        if (activeElements.Count != 0)
+                        {
+                            foreach (var element in activeElements)
+                                element.IncreaseSpeed(f);
+                        }
+                        var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
+                        if (elementsToBeRemoved.Count != 0)
+                        {
+                            foreach (var element in elementsToBeRemoved)
+                                element.IncreaseSpeed(f);
+                        }
+                    }
+                });
             }
-
-            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            else
             {
-                m_hazardsSpeed = newSpeed;
-            }).Initialise(m_hazardsSpeed, newSpeed, (f) =>
-            {
+                m_HazardsSpeed = newSpeed;
                 foreach (var key in m_HazardListKeys)
                 {
                     var activeElements = m_ActiveHazardsDictionary[key];
                     if (activeElements.Count != 0)
                     {
                         foreach (var element in activeElements)
-                            element.IncreaseSpeed(f);
-                    }
-                    var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
-                    if (elementsToBeRemoved.Count != 0)
-                    {
-                        foreach (var element in elementsToBeRemoved)
-                            element.IncreaseSpeed(f);
+                            element.IncreaseSpeed(m_HazardsSpeed);
                     }
                 }
-            });
+            }
+
         }
 
         //-----------------------------------------------------------------------
         //Reset Manager when game ends
-        public void Reset()
+        public void ResetManager()
         {
-            m_Ready = false;
             foreach (var key in m_HazardListKeys)
             {
                 List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];

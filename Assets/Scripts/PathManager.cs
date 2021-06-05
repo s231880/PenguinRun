@@ -34,7 +34,7 @@ namespace PenguinRun
             InitialiseElements();
             GenerateObjPool();
             FindStartingPointAndPathToInitialise(bottomRightScreenCornerX);
-            SetupPath();
+            //SetupPath();
         }
 
         //-----------------------------------------------------------------------
@@ -90,7 +90,7 @@ namespace PenguinRun
             return screenLenght;
         }
 
-        private void SetupPath()
+        public void SetupPath()
         {
             Vector3 startingPoint = m_ElementsStartingPoint;
 
@@ -109,23 +109,8 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Increase the speed of the elements
-        public void IncreasePathsSpeed()
+        public void IncreasePathsSpeed(float newSpeed)
         {
-            float newSpeed = 0;
-            switch (GameController.Instance.gameDifficulty)
-            {
-                case GameDifficulty.Easy:
-                    newSpeed = GameController.Instance.EASY_SPEED;
-                    break;
-
-                case GameDifficulty.Medium:
-                    newSpeed = GameController.Instance.MEDIUM_SPEED;
-                    break;
-
-                case GameDifficulty.Hard:
-                    newSpeed = GameController.Instance.HARD_SPEED;
-                    break;
-            }
             this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
             {
                 m_CurrentPathSpeed = newSpeed;
@@ -179,7 +164,7 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Clear all and prepare for restart
-        public void Reset()
+        public void ResetManager()
         {
             m_Ready = false;
             if (m_ActiveElements.Count != 0)

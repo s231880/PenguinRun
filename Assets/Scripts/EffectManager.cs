@@ -52,7 +52,7 @@ namespace PenguinRun
 
         private EnvironmentElement m_ActiveRay;
         public float m_SunRaySpeed;
-        public bool m_IsPlayerAlive = true;
+        //public bool m_IsPlayerAlive = true;
 
         //-----------------------------------------------------------------------
         //I need two variables, the first one starts the coroutine that leads to the effect attivation
@@ -70,7 +70,7 @@ namespace PenguinRun
         //-----------------------------------------------------------------------
         private void Update()
         {
-            if (m_IsPlayerAlive)
+            if (GameController.Instance.CurrentState == GameState.Play)
                 UpdateEffects();
         }
 
@@ -191,22 +191,9 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //TO DO
-        public void SetEffectsSpeed()
+        public void UpdateSpeed(float newSpeed)
         {
-            switch (GameController.Instance.gameDifficulty)
-            {
-                case GameDifficulty.Easy:
-                    m_SunRaySpeed = GameController.Instance.EASY_SPEED;
-                    break;
-
-                case GameDifficulty.Medium:
-                    m_SunRaySpeed = GameController.Instance.MEDIUM_SPEED;
-                    break;
-
-                case GameDifficulty.Hard:
-                    m_SunRaySpeed = GameController.Instance.HARD_SPEED;
-                    break;
-            }
+            m_SunRaySpeed = newSpeed;
         }
 
         //There could be multiple wind effects enabled ad the same time
@@ -217,6 +204,14 @@ namespace PenguinRun
                 return 0;
             else
                 return 1;
+        }
+
+        //-----------------------------------------------------------------------
+        //SNOW
+
+        public void PlaySnow(bool state)
+        {
+            m_Snow.Play(state);
         }
 
         //-----------------------------------------------------------------------
@@ -381,7 +376,7 @@ namespace PenguinRun
         //Stop the effects activation and if there is a sun ray active
         public void Stop()
         {
-            m_IsPlayerAlive = false;
+            //m_IsPlayerAlive = false;
             if (m_ActiveRay != null)
                 m_ActiveRay.Stop();
 
@@ -396,7 +391,7 @@ namespace PenguinRun
         {
             if (m_ActiveRay != null)
                 ReturnRay();
-            m_IsPlayerAlive = true;
+            //m_IsPlayerAlive = true;
             ResetEffectVariable(THUNDER);
             ResetEffectVariable(SUN_RAY);
             ResetEffectVariable(WIND);

@@ -1,10 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-
-//THE GAME IS STILL WIP. THE HAZARD AND BACKGROUND SPEEDS ARE ODD, I'LL HAVE A LOOK BEFORE CLOSE THE PROJECT
-//FOR THE MOMENT I'VE DISABLED THE CARACTHER COLLISION WITH THE HAZARDS
-
 namespace PenguinRun
 {
     public enum GameDifficulty
@@ -14,39 +10,39 @@ namespace PenguinRun
         Hard
     }
 
-    public enum PlayerState
+    public enum GameState
     {
-        Alive,
-        Dead
+        Begin,
+        Play,
+        End,
+        Quit
     }
 
     public class GameController : MonoBehaviour
     {
+        //----------------------------------------------------------------
         private GameDifficulty m_CurrentDifficulty;
-
-        public GameDifficulty gameDifficulty
+        public GameDifficulty CurrentDifficulty
         {
             get { return m_CurrentDifficulty; }
             set
             {
                 m_CurrentDifficulty = value;
-                NotifyManagers();
+                ChangeDifficulty();
             }
         }
 
-        private PlayerState m_PlayerState;
-        public PlayerState playerState
+        private GameState m_CurrentState;
+        public GameState CurrentState
         {
-            get { return m_PlayerState; }
+            get { return m_CurrentState; }
             set
             {
-                m_PlayerState = value;
-                if (value == PlayerState.Dead)
-                {
-                    EndGame();
-                }
+                m_CurrentState = value;
+                ChangeGameState();
             }
         }
+        //----------------------------------------------------------------
 
         public static GameController Instance;
 
@@ -62,22 +58,20 @@ namespace PenguinRun
         //Time and Score
         private int m_Score = 0;
 
-        private float m_TimeRange = 0;
-        public float m_GameInitialisationTime = 5;
-        public int m_InitialisationsTasks = 0;
-
+        private float m_TimeRange = 0f;
+        public float m_GameInitialisationTime = 5f;
         //----------------------------------------------------------------
         //Score thresholds to change difficult
         private const int MEDIUM_THRESHOLD = 100;
         private const int HARD_THRESHOLD = 200;
 
-        public float EASY_SPEED = 0.002f;
-        public float MEDIUM_SPEED = 0.15f;
-        public float HARD_SPEED = 0.3f;
+        private const float EASY_SPEED = 8f;
+        private const float MEDIUM_SPEED = 16f;
+        private const float HARD_SPEED = 24f;
+        private float m_CurrentSpeed = 0f;
 
         private GameObject m_Penguin;
         private SpriteRenderer m_PenguinSpriteRenderer;
-
         private void Awake()
         {
             Instance = this;
@@ -85,7 +79,6 @@ namespace PenguinRun
 #if UNITY_ANDROID
             Screen.orientation = ScreenOrientation.Landscape;
 #endif
-
             Vector2 topRightScreenCorner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
             m_Penguin = this.transform.Find("Penguin").gameObject;
             m_PenguinSpriteRenderer = m_Penguin.GetComponent<SpriteRenderer>();
@@ -116,11 +109,12 @@ namespace PenguinRun
 
             m_PathManager = environmentTransform.gameObject.AddComponent<PathManager>();
             m_PathManager.Initialise(topRightScreenCorner.x);
+            //m_GameState = GameState.Begin;
         }
 
         private void Update()
         {
-            if (m_CurrentDifficulty != GameDifficulty.Hard)
+            if (CurrentState == GameState.Play && CurrentDifficulty != GameDifficulty.Hard)
                 CheckScore();
         }
 
@@ -139,7 +133,7 @@ namespace PenguinRun
         //Timer to set the player score
         private IEnumerator Timer()
         {
-            while (m_PlayerState == PlayerState.Alive)
+            while (CurrentState == GameState.Play)
             {
                 m_Score++;
                 m_GuiManager.SetScore(m_Score.ToString());
@@ -149,7 +143,7 @@ namespace PenguinRun
 
         private void SetTimeRange()
         {
-            switch (m_CurrentDifficulty)
+            switch (CurrentDifficulty)
             {
                 case GameDifficulty.Easy:
                     m_TimeRange = 1f;
@@ -168,15 +162,15 @@ namespace PenguinRun
         //Check the actual score to increase difficulty level
         private void CheckScore()
         {
-            if (m_CurrentDifficulty == GameDifficulty.Easy)
+            if (CurrentDifficulty == GameDifficulty.Easy)
             {
                 if (m_Score > MEDIUM_THRESHOLD)
-                    m_CurrentDifficulty = GameDifficulty.Medium;
+                    CurrentDifficulty = GameDifficulty.Medium;
             }
-            else if (m_CurrentDifficulty == GameDifficulty.Medium)
+            else if (CurrentDifficulty == GameDifficulty.Medium)
             {
                 if (m_Score > HARD_THRESHOLD)
-                    m_CurrentDifficulty = GameDifficulty.Hard;
+                    CurrentDifficulty = GameDifficulty.Hard;
             }
         }
 
@@ -189,31 +183,21 @@ namespace PenguinRun
         //These functions controll player interactions whit GUI
         public void PressedPlayBtn()
         {
-            StartCoroutine(StartGame());
+            CurrentState = GameState.Play;
         }
 
-        private IEnumerator StartGame()
+        private IEnumerator StartMatch()
         {
             m_PenguinSpriteRenderer.enabled = true;
-            while (!m_EnvironmentManager.m_Ready || !m_PathManager.m_Ready)
-            {
-                yield return new WaitForEndOfFrame();
-            }
-
-            playerState = PlayerState.Alive;
-            gameDifficulty = GameDifficulty.Easy;
-            StartCoroutine(Timer());
-
-            while (!m_MainCharacter.m_Ready)
-            {
-                yield return new WaitForEndOfFrame();
-            }
+            CurrentDifficulty = GameDifficulty.Easy;
+            yield return new WaitForSeconds(m_GameInitialisationTime);
             StartCoroutine(m_HazardsManager.SetNewHazard());
+            StartCoroutine(Timer());
         }
 
         //-----------------------------------------------------------------------
         //When the player die everything must be stopped
-        private void EndGame()
+        private void EndMatch()
         {
             //Stop the game
             Time.timeScale = 0;
@@ -236,27 +220,62 @@ namespace PenguinRun
         {
             Time.timeScale = 1;
             m_PenguinSpriteRenderer.enabled = true;
-            m_PathManager.Reset();
-            m_HazardsManager.Reset();
-            m_EnvironmentManager.Reset();
+            m_PathManager.ResetManager();
+            m_HazardsManager.ResetManager();
+            m_EnvironmentManager.ClearBackgorund();
             m_MainCharacter.Reset();
             m_EffectManager.Reset();
-            StartCoroutine(StartGame());
+            StartCoroutine(StartMatch());
         }
 
         //-----------------------------------------------------------------------
         //Notify the managers when a game state change occurs
-        private void NotifyManagers()
+        public void ChangeDifficulty()
         {
-            if (m_CurrentDifficulty != GameDifficulty.Easy)                          //The Hazard manager has to be notified later when the game starts
-                m_HazardsManager.IncreaseElementsSpeed();
+            switch (CurrentDifficulty)
+            {
+                case GameDifficulty.Easy:
+                    m_CurrentSpeed = EASY_SPEED;
+                    break;
+                case GameDifficulty.Medium:
+                    m_CurrentSpeed = MEDIUM_SPEED;
+                    break;
+                case GameDifficulty.Hard:
+                    m_CurrentSpeed = HARD_SPEED;
+                    break;
+            }
 
-            m_EnvironmentManager.IncreaseElementsSpeed();
-            m_PathManager.IncreasePathsSpeed();
-            m_EffectManager.SetEffectsSpeed();                                      //Inrcrease snow speed
+            if (CurrentDifficulty != GameDifficulty.Easy)                          //The Hazard manager has to be notified later when the game starts
+                m_HazardsManager.IncreaseElementsSpeed(m_CurrentSpeed);
+
+            m_EnvironmentManager.IncreaseElementsSpeed(m_CurrentSpeed);
+            m_PathManager.IncreasePathsSpeed(m_CurrentSpeed);
+            m_EffectManager.UpdateSpeed(m_CurrentSpeed);                            //Inrcrease snow speed
             m_MainCharacter.SetWalkSpeed();                                         //Increase main character animation speed
             m_HazardsManager.SetHazardCount();                                      //Increase number of different hazards
             SetTimeRange();                                                         //Increase time to calculate score
+        }
+
+        private void ChangeGameState()
+        {
+            switch (CurrentState)
+            {
+                case GameState.Begin:
+                    break;
+                case GameState.Play:
+                    m_EnvironmentManager.SetupBackground();
+                    m_PathManager.SetupPath();
+                    m_EffectManager.PlaySnow(true);
+                    StartCoroutine(StartMatch());
+                    break;
+                case GameState.End:
+                    EndMatch();
+                    m_EffectManager.PlaySnow(true);
+                    m_EnvironmentManager.ClearBackgorund();
+                    break;
+                case GameState.Quit:
+                    break;
+            }
         }
     }
 }
