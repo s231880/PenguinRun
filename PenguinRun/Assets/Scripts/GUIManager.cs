@@ -7,36 +7,31 @@ namespace PenguinRun
 {
     public class GUIManager : MonoBehaviour
     {
-        private TextMeshProUGUI m_ScoreText;
-        private Button m_PauseBtn;
+        [Header("Views")]
+        [SerializeField]private GameObject m_EndView;
+        [SerializeField]private GameObject m_StartView;
 
-        private GameObject m_StartView;
-        private Button m_StartBtn;
-        private Button m_QuitBtn;
+        [Header("Views Elements")]
+        [SerializeField]private TextMeshProUGUI m_ScoreText;
+        [SerializeField]private Button m_PauseBtn;
 
-        private GameObject m_EndView;
-        private Button m_RestartBtn;
-        private Button m_ExitBtn;
+        [SerializeField]private Button m_StartBtn;
+        [SerializeField]private Button m_QuitBtn;
+
+        [SerializeField]private Button m_RestartBtn;
+        [SerializeField]private Button m_ExitBtn;
 
         public Action pressedRestartBtn;
         public Action pressedPlayBtn;
 
         public void Initialise()
         {
-            m_ScoreText = this.transform.GetComponentInChildren<TextMeshProUGUI>();
-            m_PauseBtn = this.transform.Find("PauseBtn").GetComponent<Button>();
             m_PauseBtn.onClick.AddListener(ShowPauseScreen);
 
-            m_StartView = this.transform.Find("StartView").gameObject;
-            m_StartBtn = m_StartView.transform.Find("StartBtn").GetComponent<Button>();
             m_StartBtn.onClick.AddListener(Play);
-            m_QuitBtn = m_StartView.transform.Find("CloseBtn").GetComponent<Button>();
             m_StartBtn.onClick.AddListener(GameController.Instance.Quit);
 
-            m_EndView = this.transform.Find("EndView").gameObject;
-            m_RestartBtn = m_EndView.transform.Find("RestartBtn").GetComponent<Button>();
             m_RestartBtn.onClick.AddListener(RestartGame);
-            m_ExitBtn = m_EndView.transform.Find("QuitBtn").GetComponent<Button>();
             m_StartBtn.onClick.AddListener(GameController.Instance.Quit);
             m_EndView.SetActive(false);
         }
