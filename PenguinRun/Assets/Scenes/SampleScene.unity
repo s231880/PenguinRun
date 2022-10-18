@@ -212,6 +212,7 @@ GameObject:
   - component: {fileID: 182626121}
   - component: {fileID: 182626120}
   - component: {fileID: 182626119}
+  - component: {fileID: 182626123}
   m_Layer: 3
   m_Name: Penguin
   m_TagString: Untagged
@@ -351,6 +352,19 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &182626123
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 182626117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b118be4e868d9d4cba3dc9e123c44cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Ready: 0
 --- !u!1 &319102363
 GameObject:
   m_ObjectHideFlags: 0
@@ -10612,11 +10626,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e69a119a6535dc4cb6ab67660cf1413, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MainCharacter: {fileID: 182626123}
   m_EnvironmentManager: {fileID: 895700993}
   m_GuiManager: {fileID: 1997086631}
   m_HazardsManager: {fileID: 895700994}
   m_PathManager: {fileID: 895700995}
+  m_EffectManager: {fileID: 1795957617}
   m_GameInitialisationTime: 3
+  m_Penguin: {fileID: 182626117}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -17291,6 +17308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1795957616}
+  - component: {fileID: 1795957617}
   m_Layer: 0
   m_Name: ParticleEffects&Lights
   m_TagString: Untagged
@@ -17316,6 +17334,20 @@ Transform:
   m_Father: {fileID: 513816927}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1795957617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1795957615}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2889c224a20f2234bb1f313341a2f7d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SnowStormSpeed: 0
+  m_SunRaySpeed: 0
 --- !u!1 &1817841837
 GameObject:
   m_ObjectHideFlags: 0
