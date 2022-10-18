@@ -382,7 +382,8 @@ namespace PenguinRun
 
             foreach (var wind in m_Winds)
                 wind.Stop();
-            
+
+            PlaySnow(false);
         }
 
         //-----------------------------------------------------------------------

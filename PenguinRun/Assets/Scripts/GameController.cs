@@ -123,8 +123,9 @@ namespace PenguinRun
         }
 
         //Timer to set the player score
-        private IEnumerator Timer()
+        private IEnumerator StartTimer()
         {
+            Debug.LogError("Start Time");
             m_Score = 0;
             while (CurrentState == GameState.Play)
             {
@@ -185,7 +186,7 @@ namespace PenguinRun
             CurrentDifficulty = GameDifficulty.Easy;
             yield return new WaitForSeconds(m_GameInitialisationTime);
             StartCoroutine(m_HazardsManager.SetNewHazard());
-            StartCoroutine(Timer());
+            StartCoroutine(StartTimer());
         }
 
         //-----------------------------------------------------------------------
@@ -199,13 +200,15 @@ namespace PenguinRun
         {
             //Stop the game
             Time.timeScale = 0;
-            m_PenguinSpriteRenderer.enabled = false;        // Disabling the penguin
-            m_EnvironmentManager.Stop();                    // Stop the background
-            m_EnvironmentManager.ClearBackgorund();
-            m_PathManager.Stop();                           // Stop the paths
-            m_HazardsManager.Stop();                        //Stop the hazards
-            m_EffectManager.Stop();                         // Stop the effects
-            m_GuiManager.ShowEndGameScreen();               // Show end game screen
+            m_PenguinSpriteRenderer.enabled = false;
+
+            m_EnvironmentManager.Stop();
+            m_PathManager.Stop();
+            m_HazardsManager.Stop();
+            m_EffectManager.Stop();
+            
+            m_GuiManager.ShowEndGameScreen();
+
         }
 
         public void Quit()
@@ -219,9 +222,7 @@ namespace PenguinRun
         {
             Time.timeScale = 1;
             m_PenguinSpriteRenderer.enabled = true;
-            m_PathManager.ResetManager();
-            m_HazardsManager.ResetManager();
-            m_EnvironmentManager.ClearBackgorund();
+
             m_MainCharacter.Reset();
             m_EffectManager.Reset();
 
@@ -270,8 +271,6 @@ namespace PenguinRun
                     break;
                 case GameState.End:
                     EndMatch();
-                    m_EffectManager.PlaySnow(false);
-                    m_EnvironmentManager.ClearBackgorund();
                     break;
                 case GameState.Quit:
                     break;

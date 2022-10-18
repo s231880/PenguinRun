@@ -54,8 +54,8 @@ namespace PenguinRun
 
         private void RestartGame()
         {
-            pressedRestartBtn?.Invoke();
             m_EndView.SetActive(false);
+            pressedRestartBtn?.Invoke();
         }
 
         //TO BE CHANGED ONCE SCREENS ARE READY

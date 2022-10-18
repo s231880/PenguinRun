@@ -318,6 +318,7 @@ namespace PenguinRun
                         element.Stop();
                         m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
                     }
+                    m_ActiveElementsDictionary[key].Clear();
                 }
 
                 var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
@@ -328,6 +329,7 @@ namespace PenguinRun
                         element.Stop();
                         m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
                     }
+                    m_ElementsToBeRemovedDictionary[key].Clear();
                 }
             }
         }

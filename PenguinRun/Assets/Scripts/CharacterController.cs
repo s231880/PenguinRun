@@ -6,7 +6,7 @@ namespace PenguinRun
     public class CharacterController : MonoBehaviour
     {
         private Animator m_Animator;
-        private ParticleSystem m_DustParticleSystem;
+        //private ParticleSystem m_DustParticleSystem;
 
         private float m_WalkSpeed = 0;
         private const float EASY_WALK_SPEED = 1f;
@@ -19,7 +19,7 @@ namespace PenguinRun
         private void Awake()
         {
             m_Animator = gameObject.transform.GetComponent<Animator>();
-            m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
+            //m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
         public void Jump(bool state)

@@ -378,29 +378,6 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Reset Manager when game ends
-        public void ResetManager()
-        {
-            foreach (var key in m_HazardListKeys)
-            {
-                List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];
-                if (activeElementList.Count != 0)
-                {
-                    foreach (var hazard in activeElementList)
-                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
-
-                    activeElementList.Clear();
-                }
-                List<HazardElement> toBeRemovedElementList = m_ElementsToBeRemovedDictionary[key];
-                if (toBeRemovedElementList.Count != 0)
-                {
-                    foreach (var hazard in toBeRemovedElementList)
-                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
-
-                    toBeRemovedElementList.Clear();
-                }
-            }
-        }
-
         public void Stop()
         {
             foreach (var key in m_HazardListKeys)
@@ -409,10 +386,17 @@ namespace PenguinRun
                 if (activeElementList.Count != 0)
                 {
                     foreach (var hazard in activeElementList)
-                    {
-                        hazard.Stop();
                         m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
-                    }
+
+                    m_ActiveHazardsDictionary[key].Clear();
+                }
+                List<HazardElement> toBeRemovedElementList = m_ElementsToBeRemovedDictionary[key];
+                if (toBeRemovedElementList.Count != 0)
+                {
+                    foreach (var hazard in toBeRemovedElementList)
+                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+
+                    m_ElementsToBeRemovedDictionary[key].Clear();
                 }
             }
         }

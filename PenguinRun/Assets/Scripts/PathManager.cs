@@ -21,12 +21,13 @@ namespace PenguinRun
         private int m_PathToBeInitialised;
         public float m_CurrentPathSpeed = 0;
 
-        public bool m_Ready = false;
+        //public bool m_Ready = false;
         public float m_PreviousElementSpeed = 0;
 
         private void Update()
         {
-            UpdatePath();
+            if (GameController.Instance.CurrentState == GameState.Play)
+                UpdatePath();
         }
 
         public void Initialise(float bottomRightScreenCornerX)
@@ -34,7 +35,6 @@ namespace PenguinRun
             InitialiseElements();
             GenerateObjPool();
             FindStartingPointAndPathToInitialise(bottomRightScreenCornerX);
-            //SetupPath();
         }
 
         //-----------------------------------------------------------------------
@@ -104,7 +104,7 @@ namespace PenguinRun
                 if (count == -m_PathToBeInitialised + 1)
                     m_LastElement = element;
             }
-            m_Ready = true;
+            //m_Ready = true;
         }
 
         //-----------------------------------------------------------------------
@@ -158,7 +158,12 @@ namespace PenguinRun
             if (m_ActiveElements.Count != 0)
             {
                 foreach (var path in m_ActiveElements)
+                {
                     path.Stop();
+                    m_Pool.ReturnObjectToThePool(path.gameObject);
+                }
+
+                m_ActiveElements.Clear();
             }
         }
 
@@ -166,7 +171,7 @@ namespace PenguinRun
         //Clear all and prepare for restart
         public void ResetManager()
         {
-            m_Ready = false;
+            //m_Ready = false;
             if (m_ActiveElements.Count != 0)
             {
                 foreach (var path in m_ActiveElements)
