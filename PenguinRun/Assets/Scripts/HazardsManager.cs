@@ -409,7 +409,10 @@ namespace PenguinRun
                 if (activeElementList.Count != 0)
                 {
                     foreach (var hazard in activeElementList)
+                    {
                         hazard.Stop();
+                        m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+                    }
                 }
             }
         }

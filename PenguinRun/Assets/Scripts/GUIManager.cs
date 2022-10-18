@@ -50,7 +50,6 @@ namespace PenguinRun
         {
             m_StartView.SetActive(false);
             pressedPlayBtn?.Invoke();
-           // GameController.Instance.PressedPlayBtn();
         }
 
         public void ShowEndGameScreen()

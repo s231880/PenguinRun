@@ -45,15 +45,16 @@ namespace PenguinRun
         //----------------------------------------------------------------
 
         public static GameController Instance;
+        [Header("Managers")]
 
-        private CharacterController m_MainCharacter;
+        [SerializeField] private CharacterController m_MainCharacter;
         [SerializeField]private EnvironmentManager m_EnvironmentManager;
-        private PlayerInput m_PlayerActionController;
         [SerializeField]private GUIManager m_GuiManager;
         [SerializeField]private HazardsManager m_HazardsManager;
         [SerializeField]private PathManager m_PathManager;
         [SerializeField]private EffectManager m_EffectManager;
 
+        private PlayerInput m_PlayerActionController;
         //----------------------------------------------------------------
         //Time and Score
         private int m_Score = 0;
@@ -70,7 +71,7 @@ namespace PenguinRun
         private const float HARD_SPEED = 24f;
         private float m_CurrentSpeed = 0f;
 
-        private GameObject m_Penguin;
+        [SerializeField] private GameObject m_Penguin;
         private SpriteRenderer m_PenguinSpriteRenderer;
         private void Awake()
         {
@@ -80,10 +81,8 @@ namespace PenguinRun
             Screen.orientation = ScreenOrientation.Landscape;
 #endif
             Vector2 topRightScreenCorner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
-            m_Penguin = this.transform.Find("Penguin").gameObject;
             m_PenguinSpriteRenderer = m_Penguin.GetComponent<SpriteRenderer>();
             m_PenguinSpriteRenderer.enabled = false;
-            m_MainCharacter = m_Penguin.AddComponent<CharacterController>();
             if (m_MainCharacter != null)
             {
                 InitialiseControls();
@@ -100,11 +99,9 @@ namespace PenguinRun
             m_GuiManager.pressedPlayBtn += PressedPlayBtn;
             m_GuiManager.pressedRestartBtn += Restart;
 
-            m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
             m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
 
             m_PathManager.Initialise(topRightScreenCorner.x);
-            //CurrentState = GameState.Begin;
         }
 
         private void Update()
@@ -204,6 +201,7 @@ namespace PenguinRun
             Time.timeScale = 0;
             m_PenguinSpriteRenderer.enabled = false;        // Disabling the penguin
             m_EnvironmentManager.Stop();                    // Stop the background
+            m_EnvironmentManager.ClearBackgorund();
             m_PathManager.Stop();                           // Stop the paths
             m_HazardsManager.Stop();                        //Stop the hazards
             m_EffectManager.Stop();                         // Stop the effects
@@ -226,7 +224,8 @@ namespace PenguinRun
             m_EnvironmentManager.ClearBackgorund();
             m_MainCharacter.Reset();
             m_EffectManager.Reset();
-            StartCoroutine(StartMatch());
+
+            CurrentState = GameState.Play;
         }
 
         //-----------------------------------------------------------------------

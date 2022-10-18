@@ -314,14 +314,20 @@ namespace PenguinRun
                 if (activeElements.Count != 0)
                 {
                     foreach (var element in activeElements)
+                    {
                         element.Stop();
+                        m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
+                    }
                 }
 
                 var elementsToBeRemoved = m_ElementsToBeRemovedDictionary[key];
                 if (elementsToBeRemoved.Count != 0)
                 {
                     foreach (var element in elementsToBeRemoved)
+                    {
                         element.Stop();
+                        m_PoolsDictionary[key].ReturnObjectToThePool(element.gameObject);
+                    }
                 }
             }
         }
