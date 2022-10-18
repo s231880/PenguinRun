@@ -42,7 +42,6 @@ namespace PenguinRun
         //-------------------------------------------------------------------------------
         //Constant variables
         private const int EASY_HAZARDS = 3;
-
         private const int MEDIUM_HAZARDS = 7;
         private const int HARD_HAZARDS = 9;
         private const int HIGH_BIRD_MULTIPLIER_CONST = 7;
@@ -53,7 +52,7 @@ namespace PenguinRun
 
         private int m_HazardsCount;
         private float m_HazardBreak = 0;
-        [SerializeField]private float m_HazardsSpeed = 0f/* = HAZARD_EASY_SPEED*/;
+        [SerializeField] private float m_HazardsSpeed = 10f;/*HAZARD_EASY_SPEED*/ 
 
         private Vector3 m_PenguinPosition = new Vector3();
         private float m_PenguinWidth = 0;

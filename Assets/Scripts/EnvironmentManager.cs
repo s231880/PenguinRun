@@ -300,7 +300,7 @@ namespace PenguinRun
                 }
             }
             //m_IsPlayerAlive = true;
-            //SetupBackground();
+            SetupBackground();
         }
 
         //-----------------------------------------------------------------------

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace PenguinRun
 {
@@ -12,6 +13,8 @@ namespace PenguinRun
         private const float MEDIUM_WALK_SPEED = 1.5f;
         private const float HARD_WALK_SPEED = 2f;
         public bool m_Ready = false;
+
+        public Action playerHit;
 
         private void Awake()
         {
@@ -28,7 +31,7 @@ namespace PenguinRun
         {
             if (collision.gameObject.tag == "Hazard")
             {
-                //GameController.Instance.playerState = PlayerState.Dead;
+                playerHit?.Invoke();
             }
         }
 

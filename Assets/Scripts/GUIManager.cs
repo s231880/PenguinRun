@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,9 @@ namespace PenguinRun
         private GameObject m_EndView;
         private Button m_RestartBtn;
         private Button m_ExitBtn;
+
+        public Action pressedRestartBtn;
+        public Action pressedPlayBtn;
 
         public void Initialise()
         {
@@ -45,7 +49,8 @@ namespace PenguinRun
         private void Play()
         {
             m_StartView.SetActive(false);
-            GameController.Instance.PressedPlayBtn();
+            pressedPlayBtn?.Invoke();
+           // GameController.Instance.PressedPlayBtn();
         }
 
         public void ShowEndGameScreen()
@@ -55,7 +60,7 @@ namespace PenguinRun
 
         private void RestartGame()
         {
-            GameController.Instance.Restart();
+            pressedRestartBtn?.Invoke();
             m_EndView.SetActive(false);
         }
 

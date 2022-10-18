@@ -47,12 +47,12 @@ namespace PenguinRun
         public static GameController Instance;
 
         private CharacterController m_MainCharacter;
-        private EnvironmentManager m_EnvironmentManager;
+        [SerializeField]private EnvironmentManager m_EnvironmentManager;
         private PlayerInput m_PlayerActionController;
-        private GUIManager m_GuiManager;
-        private HazardsManager m_HazardsManager;
-        private PathManager m_PathManager;
-        private EffectManager m_EffectManager;
+        [SerializeField]private GUIManager m_GuiManager;
+        [SerializeField]private HazardsManager m_HazardsManager;
+        [SerializeField]private PathManager m_PathManager;
+        [SerializeField]private EffectManager m_EffectManager;
 
         //----------------------------------------------------------------
         //Time and Score
@@ -88,28 +88,23 @@ namespace PenguinRun
             {
                 InitialiseControls();
             }
+            m_MainCharacter.playerHit += PlayerHit;
 
-            var environmentTransform = this.transform.Find("Environment");
-
-            m_EnvironmentManager = environmentTransform.gameObject.AddComponent<EnvironmentManager>();
-            if (m_EnvironmentManager == null)
-                Debug.LogError("EnvironmentManagerNull");
             m_EnvironmentManager.Initialise(topRightScreenCorner.x);
 
             Vector3 penguinPos = m_Penguin.transform.position; ;
             float penguinWidth = m_Penguin.GetComponent<BoxCollider2D>().size.x;
-            m_HazardsManager = environmentTransform.gameObject.AddComponent<HazardsManager>();
             m_HazardsManager.Initialise(penguinPos, penguinWidth, topRightScreenCorner.x);
 
-            m_GuiManager = this.transform.Find("GUI").gameObject.AddComponent<GUIManager>();
             m_GuiManager.Initialise();
+            m_GuiManager.pressedPlayBtn += PressedPlayBtn;
+            m_GuiManager.pressedRestartBtn += Restart;
 
             m_EffectManager = this.transform.Find("ParticleEffects&Lights").gameObject.AddComponent<EffectManager>();
             m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
 
-            m_PathManager = environmentTransform.gameObject.AddComponent<PathManager>();
             m_PathManager.Initialise(topRightScreenCorner.x);
-            //m_GameState = GameState.Begin;
+            //CurrentState = GameState.Begin;
         }
 
         private void Update()
@@ -133,6 +128,7 @@ namespace PenguinRun
         //Timer to set the player score
         private IEnumerator Timer()
         {
+            m_Score = 0;
             while (CurrentState == GameState.Play)
             {
                 m_Score++;
@@ -181,7 +177,7 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //These functions controll player interactions whit GUI
-        public void PressedPlayBtn()
+        private void PressedPlayBtn()
         {
             CurrentState = GameState.Play;
         }
@@ -197,6 +193,11 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //When the player die everything must be stopped
+        private void PlayerHit()
+        {
+            CurrentState = GameState.End;
+        }
+
         private void EndMatch()
         {
             //Stop the game
@@ -216,7 +217,7 @@ namespace PenguinRun
 
         //-----------------------------------------------------------------------
         //Reset the managers
-        public void Restart()
+        private void Restart()
         {
             Time.timeScale = 1;
             m_PenguinSpriteRenderer.enabled = true;
@@ -270,7 +271,7 @@ namespace PenguinRun
                     break;
                 case GameState.End:
                     EndMatch();
-                    m_EffectManager.PlaySnow(true);
+                    m_EffectManager.PlaySnow(false);
                     m_EnvironmentManager.ClearBackgorund();
                     break;
                 case GameState.Quit:
