@@ -29,14 +29,16 @@ namespace PenguinRun
 
         public void Initialise()
         {
-            m_PauseBtn.onClick.AddListener(ShowPauseScreen);
+            //m_PauseBtn.onClick.AddListener(ShowPauseScreen);
 
             m_StartBtn.onClick.AddListener(Play);
-            m_StartBtn.onClick.AddListener(GameController.Instance.Quit);
+            m_QuitBtn.onClick.AddListener(GameController.Instance.Quit);
 
             m_RestartBtn.onClick.AddListener(RestartGame);
-            m_StartBtn.onClick.AddListener(GameController.Instance.Quit);
+            m_ExitBtn.onClick.AddListener(GameController.Instance.Quit);
+
             m_EndView.SetActive(false);
+            ShowView(true, true);
         }
 
         public void SetScore(string score)
@@ -46,26 +48,64 @@ namespace PenguinRun
 
         private void Play()
         {
-            m_StartView.SetActive(false);
-            pressedPlayBtn?.Invoke();
+            ShowView(false,true, () =>
+            {
+                m_StartView.SetActive(false);
+                pressedPlayBtn?.Invoke();
+            });
         }
 
         public void ShowEndGameScreen()
         {
             m_EndView.SetActive(true);
             m_FinalScore.text = "Your score was:\n" + m_ScoreText.text;
+            ShowView(true, false);
         }
 
         private void RestartGame()
         {
-            m_EndView.SetActive(false);
-            pressedRestartBtn?.Invoke();
+            ShowView(false, false, () =>
+            {
+                m_EndView.SetActive(false);
+                pressedRestartBtn?.Invoke();
+            });
         }
 
-        //TO BE CHANGED ONCE SCREENS ARE READY
-        private void ShowPauseScreen()
-        {
-            GameController.Instance.Quit();
+        private void ShowView(bool show,bool startView, Action callback = null)
+         {
+
+            float startingPos = show? -200f: 54f;
+            float endPos = show? 54f : -200f;
+
+            RectTransform startBtnRect;
+            RectTransform quitBtnRect;
+
+            if (startView)
+            {
+                startBtnRect = m_StartBtn.GetComponent<RectTransform>();
+                quitBtnRect = m_ExitBtn.GetComponent<RectTransform>();
+            }
+            else
+            {
+                startBtnRect = m_RestartBtn.GetComponent<RectTransform>();
+                quitBtnRect = m_QuitBtn.GetComponent<RectTransform>();
+            }
+
+            Vector2 startBtnPos = startBtnRect.anchoredPosition;
+            Vector2 quitBtnPos = quitBtnRect.anchoredPosition;
+
+            this.Create<ValueTween>(1.2f, EaseType.ElasticInOut, () =>
+            {
+                
+                callback?.Invoke();
+            }).Initialise(startingPos,endPos, (f) =>
+            {
+                startBtnPos.y = f;
+                startBtnRect.anchoredPosition = startBtnPos;
+
+                quitBtnPos.y = f;
+                quitBtnRect.anchoredPosition = quitBtnPos;
+            });
         }
     }
 }

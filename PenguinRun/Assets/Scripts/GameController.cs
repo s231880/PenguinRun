@@ -177,11 +177,13 @@ namespace PenguinRun
             CurrentState = GameState.Play;
         }
 
-        private IEnumerator StartMatch()
+        private void StartMatch()
         {
+            m_EnvironmentManager.SetupBackground();
+            m_PathManager.SetupPath();
+            m_EffectManager.PlaySnow(true);
             m_PenguinSpriteRenderer.enabled = true;
             CurrentDifficulty = GameDifficulty.Easy;
-            yield return new WaitForSeconds(/*m_GameInitialisationTime*/0);
             StartCoroutine(m_HazardsManager.SetNewHazard());
             StartCoroutine(StartTimer());
         }
@@ -195,7 +197,6 @@ namespace PenguinRun
 
         private void EndMatch()
         {
-            Time.timeScale = 0;
             m_PenguinSpriteRenderer.enabled = false;
 
             m_EnvironmentManager.Stop();
@@ -260,11 +261,7 @@ namespace PenguinRun
                 case GameState.Begin:
                     break;
                 case GameState.Play:
-                    m_EnvironmentManager.SetupBackground();
-                    m_PathManager.SetupPath();
-                    m_EffectManager.PlaySnow(true);
-                    StartCoroutine(StartMatch());
-                    
+                    StartMatch();
                     break;
                 case GameState.End:
                     EndMatch();
