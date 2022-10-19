@@ -104,12 +104,6 @@ namespace PenguinRun
             m_PathManager.Initialise(topRightScreenCorner.x);
         }
 
-        private void Update()
-        {
-            if (CurrentState == GameState.Play && CurrentDifficulty != GameDifficulty.Hard)
-                CheckScore();
-        }
-
         private void OnEnable()
         {
             m_PlayerActionController.Enable();
@@ -125,13 +119,16 @@ namespace PenguinRun
         //Timer to set the player score
         private IEnumerator StartTimer()
         {
-            Debug.LogError("Start Time");
             m_Score = 0;
+            m_GuiManager.SetScore(m_Score.ToString());
             while (CurrentState == GameState.Play)
             {
+                yield return new WaitForSeconds(m_TimeRange);
                 m_Score++;
                 m_GuiManager.SetScore(m_Score.ToString());
-                yield return new WaitForSeconds(m_TimeRange);
+                
+                if (CurrentDifficulty != GameDifficulty.Hard)
+                    CheckScore();
             }
         }
 
@@ -184,7 +181,7 @@ namespace PenguinRun
         {
             m_PenguinSpriteRenderer.enabled = true;
             CurrentDifficulty = GameDifficulty.Easy;
-            yield return new WaitForSeconds(m_GameInitialisationTime);
+            yield return new WaitForSeconds(/*m_GameInitialisationTime*/0);
             StartCoroutine(m_HazardsManager.SetNewHazard());
             StartCoroutine(StartTimer());
         }
@@ -198,7 +195,6 @@ namespace PenguinRun
 
         private void EndMatch()
         {
-            //Stop the game
             Time.timeScale = 0;
             m_PenguinSpriteRenderer.enabled = false;
 
@@ -206,9 +202,9 @@ namespace PenguinRun
             m_PathManager.Stop();
             m_HazardsManager.Stop();
             m_EffectManager.Stop();
-            
-            m_GuiManager.ShowEndGameScreen();
+            StopAllCoroutines();
 
+            m_GuiManager.ShowEndGameScreen();
         }
 
         public void Quit()
@@ -221,7 +217,6 @@ namespace PenguinRun
         private void Restart()
         {
             Time.timeScale = 1;
-            m_PenguinSpriteRenderer.enabled = true;
 
             m_MainCharacter.Reset();
             m_EffectManager.Reset();
@@ -268,6 +263,7 @@ namespace PenguinRun
                     m_PathManager.SetupPath();
                     m_EffectManager.PlaySnow(true);
                     StartCoroutine(StartMatch());
+                    
                     break;
                 case GameState.End:
                     EndMatch();
