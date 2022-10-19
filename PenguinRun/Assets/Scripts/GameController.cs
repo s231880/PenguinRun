@@ -217,6 +217,7 @@ namespace PenguinRun
         private void Restart()
         {
             Time.timeScale = 1;
+            m_PenguinSpriteRenderer.enabled = true;
 
             m_MainCharacter.Reset();
             m_EffectManager.Reset();

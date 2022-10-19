@@ -190,7 +190,7 @@ namespace PenguinRun
         }
 
         //-----------------------------------------------------------------------
-        //TO DO
+
         public void UpdateSpeed(float newSpeed)
         {
             m_SunRaySpeed = newSpeed;
@@ -376,7 +376,6 @@ namespace PenguinRun
         //Stop the effects activation and if there is a sun ray active
         public void Stop()
         {
-            //m_IsPlayerAlive = false;
             if (m_ActiveRay != null)
                 m_ActiveRay.Stop();
 

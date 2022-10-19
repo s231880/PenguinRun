@@ -13,6 +13,8 @@ namespace PenguinRun
 
         [Header("Views Elements")]
         [SerializeField]private TextMeshProUGUI m_ScoreText;
+        [SerializeField]private TextMeshProUGUI m_FinalScore;
+        
         [SerializeField]private Button m_PauseBtn;
 
         [SerializeField]private Button m_StartBtn;
@@ -20,6 +22,7 @@ namespace PenguinRun
 
         [SerializeField]private Button m_RestartBtn;
         [SerializeField]private Button m_ExitBtn;
+
 
         public Action pressedRestartBtn;
         public Action pressedPlayBtn;
@@ -50,6 +53,7 @@ namespace PenguinRun
         public void ShowEndGameScreen()
         {
             m_EndView.SetActive(true);
+            m_FinalScore.text = "Your score was:\n" + m_ScoreText.text;
         }
 
         private void RestartGame()
