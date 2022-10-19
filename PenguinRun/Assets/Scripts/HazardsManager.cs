@@ -338,7 +338,7 @@ namespace PenguinRun
         {
             if(m_HazardsSpeed != 0)
             {
-                this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+                this.Create<ValueTween>(0.5f, EaseType.Linear, () =>
                 {
                     m_HazardsSpeed = newSpeed;
                 }).Initialise(m_HazardsSpeed, newSpeed, (f) =>

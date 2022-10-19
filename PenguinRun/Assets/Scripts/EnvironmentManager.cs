@@ -251,7 +251,7 @@ namespace PenguinRun
         //Increase elements speed when the game diffult is increased or game is started
         public void IncreaseElementsSpeed(float newSpeed)
         {
-            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            this.Create<ValueTween>(0.5f, EaseType.Linear, () =>
             {
                 m_ElementsSpeed = newSpeed;
             }).Initialise(m_ElementsSpeed, newSpeed, (f) =>

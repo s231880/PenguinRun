@@ -11,7 +11,8 @@
                     "id": "38deae3d-097e-4c13-877d-87f9bd728082",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -29,8 +30,8 @@
                 {
                     "name": "",
                     "id": "44e572f3-8dd6-4d03-8b34-6aca60f85625",
-                    "path": "<Touchscreen>/primaryTouch/tap",
-                    "interactions": "Tap",
+                    "path": "<Touchscreen>/touch1/tapCount",
+                    "interactions": "Tap(duration=0.2,pressPoint=0.5)",
                     "processors": "",
                     "groups": "",
                     "action": "Jump",

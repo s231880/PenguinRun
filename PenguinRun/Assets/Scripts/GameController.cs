@@ -15,7 +15,6 @@ namespace PenguinRun
         Begin,
         Play,
         End,
-        Quit
     }
 
     public class GameController : MonoBehaviour
@@ -45,22 +44,22 @@ namespace PenguinRun
         //----------------------------------------------------------------
 
         public static GameController Instance;
+       
         [Header("Managers")]
 
-        [SerializeField] private CharacterController m_MainCharacter;
+        [SerializeField]private CharacterController m_MainCharacter;
         [SerializeField]private EnvironmentManager m_EnvironmentManager;
         [SerializeField]private GUIManager m_GuiManager;
         [SerializeField]private HazardsManager m_HazardsManager;
         [SerializeField]private PathManager m_PathManager;
         [SerializeField]private EffectManager m_EffectManager;
+        [SerializeField]private TouchInputManager m_InputManager;
 
-        private PlayerInput m_PlayerActionController;
-        //----------------------------------------------------------------
+        
         //Time and Score
         private int m_Score = 0;
 
         private float m_TimeRange = 0f;
-        public float m_GameInitialisationTime = 5f;
         //----------------------------------------------------------------
         //Score thresholds to change difficult
         private const int MEDIUM_THRESHOLD = 100;
@@ -83,12 +82,10 @@ namespace PenguinRun
             Vector2 topRightScreenCorner = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, Screen.height));
             m_PenguinSpriteRenderer = m_Penguin.GetComponent<SpriteRenderer>();
             m_PenguinSpriteRenderer.enabled = false;
-            if (m_MainCharacter != null)
-            {
-                InitialiseControls();
-            }
-            m_MainCharacter.playerHit += PlayerHit;
 
+            m_InputManager.tap += ()=> m_MainCharacter.Jump(true);
+
+            m_MainCharacter.playerHit += PlayerHit;
             m_EnvironmentManager.Initialise(topRightScreenCorner.x);
 
             Vector3 penguinPos = m_Penguin.transform.position; ;
@@ -102,18 +99,6 @@ namespace PenguinRun
             m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
 
             m_PathManager.Initialise(topRightScreenCorner.x);
-        }
-
-        private void OnEnable()
-        {
-            m_PlayerActionController.Enable();
-        }
-
-        private void InitialiseControls()
-        {
-            m_PlayerActionController = new PlayerInput();
-            m_PlayerActionController.Action.Jump.performed += ctx => m_MainCharacter.Jump(true);
-            m_PlayerActionController.Action.Jump.canceled += ctx => m_MainCharacter.Jump(false);
         }
 
         //Timer to set the player score
@@ -265,8 +250,6 @@ namespace PenguinRun
                     break;
                 case GameState.End:
                     EndMatch();
-                    break;
-                case GameState.Quit:
                     break;
             }
         }

@@ -362,7 +362,7 @@ namespace PenguinRun
 
         private void IncreaseSunRaySpeed(float newSpeed)
         {
-            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            this.Create<ValueTween>(0.5f, EaseType.Linear, () =>
             {
                 m_SunRaySpeed = newSpeed;
             }).Initialise(m_SunRaySpeed, newSpeed, (f) =>

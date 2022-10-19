@@ -52,8 +52,8 @@ public partial class @PlayerInput : IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""44e572f3-8dd6-4d03-8b34-6aca60f85625"",
-                    ""path"": ""<Touchscreen>/primaryTouch/tap"",
-                    ""interactions"": ""Tap"",
+                    ""path"": ""<Touchscreen>/touch1/tapCount"",
+                    ""interactions"": ""Tap(duration=0.2,pressPoint=0.5)"",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Jump"",

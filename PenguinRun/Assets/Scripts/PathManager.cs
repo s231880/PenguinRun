@@ -111,7 +111,7 @@ namespace PenguinRun
         //Increase the speed of the elements
         public void IncreasePathsSpeed(float newSpeed)
         {
-            this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+            this.Create<ValueTween>(1f, EaseType.Linear, () =>
             {
                 m_CurrentPathSpeed = newSpeed;
             }).Initialise(m_CurrentPathSpeed, newSpeed, (f) =>

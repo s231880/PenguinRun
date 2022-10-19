@@ -25,13 +25,14 @@ namespace PenguinRun
         public void Jump(bool state)
         {
             m_Animator.SetBool("isJumping", state);
+            Debug.Log("DIOCANE");
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
         {
             if (collision.gameObject.tag == "Hazard")
             {
-                playerHit?.Invoke();
+               // playerHit?.Invoke();
             }
         }
 
@@ -57,7 +58,7 @@ namespace PenguinRun
         {
             if (walkSpeed != m_WalkSpeed)
             {
-                this.Create<ValueTween>(GameController.Instance.m_GameInitialisationTime, EaseType.Linear, () =>
+                this.Create<ValueTween>(0.5f, EaseType.Linear, () =>
                 {
                     //Once the speed has increased to the maximum, inform the GameController
                     m_Ready = true;

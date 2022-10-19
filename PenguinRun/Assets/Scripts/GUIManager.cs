@@ -94,7 +94,7 @@ namespace PenguinRun
             Vector2 startBtnPos = startBtnRect.anchoredPosition;
             Vector2 quitBtnPos = quitBtnRect.anchoredPosition;
 
-            this.Create<ValueTween>(1.2f, EaseType.ElasticInOut, () =>
+            this.Create<ValueTween>(1.2f, EaseType.ExpoInOut, () =>
             {
                 
                 callback?.Invoke();
