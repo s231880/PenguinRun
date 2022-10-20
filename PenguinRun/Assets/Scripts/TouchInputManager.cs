@@ -16,15 +16,11 @@ public class TouchInputManager : MonoBehaviour
     private void OnDisable()
     {
         m_PlayerActionController.Action.Jump.started -= Touch;
-        //m_PlayerActionController.Action.Jump.performed -= Touch;
-        //m_PlayerActionController.Action.Jump.canceled -= Touch;
     }
 
     private void InitialiseControls()
     {
         m_PlayerActionController.Action.Jump.started += Touch;
-        //m_PlayerActionController.Action.Jump.performed += Touch;
-       // m_PlayerActionController.Action.Jump.canceled += Touch;
     }
 
     private void Touch(InputAction.CallbackContext ctx)

@@ -83,7 +83,7 @@ namespace PenguinRun
             m_PenguinSpriteRenderer = m_Penguin.GetComponent<SpriteRenderer>();
             m_PenguinSpriteRenderer.enabled = false;
 
-            m_InputManager.tap += ()=> m_MainCharacter.Jump(true);
+            m_InputManager.tap += ()=> m_MainCharacter.Jump();
 
             m_MainCharacter.playerHit += PlayerHit;
             m_EnvironmentManager.Initialise(topRightScreenCorner.x);

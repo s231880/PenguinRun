@@ -22,10 +22,9 @@ namespace PenguinRun
             //m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
-        public void Jump(bool state)
+        public void Jump()
         {
-            m_Animator.SetBool("isJumping", state);
-            Debug.Log("DIOCANE");
+            m_Animator.SetTrigger("isJumping");
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
