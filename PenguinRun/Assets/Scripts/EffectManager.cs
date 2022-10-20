@@ -81,20 +81,12 @@ namespace PenguinRun
         {
             m_ScreenLimit = -topRightScreenCornerX.x;
             SetInitialSunRayPosition(topRightScreenCornerX);
-            //InitialiseParticleSystems();
             InitialiseAudio();
             InitialiseSunRaysPool();
         }
 
         private void InitialiseAudio()
         {
-            //var sources = Camera.main.GetComponents<AudioSource>();
-            //m_ThunderAudioSource = sources[0];
-            //m_WindAudioSource = sources[1];
-            //m_SoundTrackSource = sources[2];
-
-            //m_ThunderSound = Resources.Load<AudioClip>($"AudioClip/Thunder");
-            //m_SoundTrack = Resources.Load<AudioClip>($"AudioClip/Soundtrack");
             m_SoundTrackSource.clip = m_SoundTrack;
 #if UNITY_EDITOR
             m_SoundTrackSource.playOnAwake = false;
@@ -110,13 +102,6 @@ namespace PenguinRun
 
         private void InitialiseSunRaysPool()
         {
-            //List<GameObject> sunRaysPrefab = new List<GameObject>();
-            //for (int i = 1; i <= SUN_RAYS_PREFAB; ++i)
-            //{
-            //    var sunRay = Resources.Load<GameObject>($"Prefabs/Environment/SunRay/SunRay{i}");
-            //    sunRaysPrefab.Add(sunRay);
-            //}
-
             var pool = new GameObject("SunRay");
             pool.transform.SetParent(this.transform);
             var activeSunRays = new GameObject($"ActiveSunRays");

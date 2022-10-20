@@ -4,28 +4,17 @@ using UnityEngine.InputSystem;
 
 public class TouchInputManager : MonoBehaviour
 {
-    private PlayerInput m_PlayerActionController;
     public Action tap;
-    private void OnEnable()
-    {
-        m_PlayerActionController = new PlayerInput();
-        m_PlayerActionController.Enable();
-        InitialiseControls();
-    }
 
-    private void OnDisable()
+    private void Update()
     {
-        m_PlayerActionController.Action.Jump.started -= Touch;
-    }
+#if UNITY_EDITOR
 
-    private void InitialiseControls()
-    {
-        m_PlayerActionController.Action.Jump.started += Touch;
+        if (Input.GetKeyDown(KeyCode.Space))
+            tap?.Invoke();
+#else
+         if (Input.touchCount > 0 && Input.touchCount == 1)
+            tap?.Invoke();
+#endif
     }
-
-    private void Touch(InputAction.CallbackContext ctx)
-    {
-        tap?.Invoke();
-    }
-
 }
