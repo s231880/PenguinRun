@@ -93,18 +93,14 @@ namespace PenguinRun
         public void SetupPath()
         {
             Vector3 startingPoint = m_ElementsStartingPoint;
-
-            for (int count = -m_PathToBeInitialised + 1; count <= 1; ++count)  //Magic number to be changed
+            for (int count = -m_PathToBeInitialised; count <= 1; ++count)
             {
-                startingPoint.x -= (m_ElementLenght * count);
+                startingPoint.x = m_ElementsStartingPoint.x + (m_ElementLenght * count);
                 var element = m_Pool.GetObject().GetComponent<PathElement>();
                 element.Activate(startingPoint, STARTING_SPEED);
                 m_ActiveElements.Add(element);
-
-                if (count == -m_PathToBeInitialised + 1)
-                    m_LastElement = element;
             }
-            //m_Ready = true;
+            m_LastElement = m_ActiveElements[m_ActiveElements.Count - 1];
         }
 
         //-----------------------------------------------------------------------

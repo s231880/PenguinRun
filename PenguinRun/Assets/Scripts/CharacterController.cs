@@ -31,7 +31,7 @@ namespace PenguinRun
         {
             if (collision.gameObject.tag == "Hazard")
             {
-               // playerHit?.Invoke();
+                playerHit?.Invoke();
             }
         }
 
