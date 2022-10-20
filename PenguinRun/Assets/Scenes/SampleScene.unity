@@ -5753,7 +5753,7 @@ ParticleSystem:
   ringBufferLoopRange: {x: 0, y: 1}
   looping: 1
   prewarm: 1
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -6676,7 +6676,7 @@ ParticleSystem:
     m_BurstCount: 0
     m_Bursts: []
   SizeModule:
-    enabled: 1
+    enabled: 0
     curve:
       serializedVersion: 2
       minMaxState: 1
@@ -17673,7 +17673,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2889c224a20f2234bb1f313341a2f7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Snow: {fileID: 423788468}
   m_SnowStormSpeed: 0
+  m_Winds:
+  - {fileID: 1469118725}
+  - {fileID: 389489310}
   m_SunRaySpeed: 0
 --- !u!1 &1816685982
 GameObject:

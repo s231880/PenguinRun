@@ -11,7 +11,7 @@ namespace PenguinRun
     public class EffectManager : MonoBehaviour
     {
         private float m_ScreenLimit;
-        private ParticleSystem m_Snow;
+        [SerializeField]private ParticleSystem m_Snow;
         public float m_SnowStormSpeed;
         private AudioClip m_SoundTrack;
         private AudioSource m_SoundTrackSource;
@@ -30,7 +30,7 @@ namespace PenguinRun
         private const int WIND_TIME_LAPSE = 15; // Change name
 
         private const string WIND = "Wind";
-        private List<ParticleSystem> m_Winds = new List<ParticleSystem>();
+        [SerializeField]private List<ParticleSystem> m_Winds = new List<ParticleSystem>();
         private AudioSource m_WindAudioSource;
         private List<AudioClip> m_WindsSounds = new List<AudioClip>();
         private const int WIND_SOUNDS = 2;
@@ -81,7 +81,7 @@ namespace PenguinRun
         {
             m_ScreenLimit = -topRightScreenCornerX.x;
             SetInitialSunRayPosition(topRightScreenCornerX);
-            InitialiseParticleSystems();
+            //InitialiseParticleSystems();
             InitialiseAudio();
             InitialiseSunRaysPool();
         }
@@ -128,16 +128,6 @@ namespace PenguinRun
             activeSunRays.transform.SetParent(this.transform);
             m_SunRayPool = pool.AddComponent<ObjectPoolManager>();
             m_SunRayPool.CreateObjPool(sunRaysPrefab, 2, pool.transform, activeSunRays.transform);
-        }
-
-        private void InitialiseParticleSystems()
-        {
-            m_Snow = this.transform.Find("Snow").GetComponent<ParticleSystem>();
-
-            var wind1 = this.transform.Find("Wind1").GetComponent<ParticleSystem>();
-            m_Winds.Add(wind1);
-            var wind2 = this.transform.Find("Wind2").GetComponent<ParticleSystem>();
-            m_Winds.Add(wind2);
         }
 
         //-------------------------------------------------------------------------------
@@ -211,7 +201,13 @@ namespace PenguinRun
 
         public void PlaySnow(bool state)
         {
-            m_Snow.Play(state);
+            if (state)
+                m_Snow.Play();
+            else
+            {
+                m_Snow.Stop();
+                m_Snow.Clear();
+            }
         }
 
         //-----------------------------------------------------------------------
@@ -376,22 +372,25 @@ namespace PenguinRun
         //Stop the effects activation and if there is a sun ray active
         public void Stop()
         {
+            //StopAllCoroutines();
+            PlaySnow(false);
             if (m_ActiveRay != null)
+            {
                 m_ActiveRay.Stop();
+                ReturnRay();
+            }
 
             foreach (var wind in m_Winds)
                 wind.Stop();
-
-            PlaySnow(false);
+            
+            ResetManager();
+            
         }
 
         //-----------------------------------------------------------------------
         //Reset Manager when game ends
-        public void Reset()
+        public void ResetManager()
         {
-            if (m_ActiveRay != null)
-                ReturnRay();
-            //m_IsPlayerAlive = true;
             ResetEffectVariable(THUNDER);
             ResetEffectVariable(SUN_RAY);
             ResetEffectVariable(WIND);
