@@ -13,31 +13,31 @@ namespace PenguinRun
         private float m_ScreenLimit;
         [SerializeField]private ParticleSystem m_Snow;
         public float m_SnowStormSpeed;
-        private AudioClip m_SoundTrack;
-        private AudioSource m_SoundTrackSource;
+        [SerializeField]private AudioClip m_SoundTrack;
+        [SerializeField]private AudioSource m_SoundTrackSource;
 
         //-----------------------------------------------------------------------
         //Thunder effect variables
         private const string THUNDER = "Thunder";
 
-        private AudioClip m_ThunderSound;
-        private AudioSource m_ThunderAudioSource;
+        [SerializeField]private AudioClip m_ThunderSound;
+        [SerializeField]private AudioSource m_ThunderAudioSource;
         private const int THUNDER_TIME_LAPSE = 20;
         private ParticleSystem m_Thunder;
 
         //-----------------------------------------------------------------------
         //Wind effect variables
         private const int WIND_TIME_LAPSE = 15; // Change name
-
         private const string WIND = "Wind";
         [SerializeField]private List<ParticleSystem> m_Winds = new List<ParticleSystem>();
-        private AudioSource m_WindAudioSource;
-        private List<AudioClip> m_WindsSounds = new List<AudioClip>();
+        [SerializeField]private AudioSource m_WindAudioSource;
+        [SerializeField]private List<AudioClip> m_WindsSounds = new List<AudioClip>();
         private const int WIND_SOUNDS = 2;
         private int m_PlayBothEffects;
 
         //-----------------------------------------------------------------------
         //Sun Rays effect variables
+        [SerializeField] private List<GameObject> m_SunRaysPrefabs = new List<GameObject>();
         private const int MAX_RAYS_TIME_LAPSE = 25;
 
         private const string SUN_RAY = "SunRay";
@@ -88,18 +88,13 @@ namespace PenguinRun
 
         private void InitialiseAudio()
         {
-            var sources = Camera.main.GetComponents<AudioSource>();
-            m_ThunderAudioSource = sources[0];
-            m_WindAudioSource = sources[1];
-            m_SoundTrackSource = sources[2];
+            //var sources = Camera.main.GetComponents<AudioSource>();
+            //m_ThunderAudioSource = sources[0];
+            //m_WindAudioSource = sources[1];
+            //m_SoundTrackSource = sources[2];
 
-            for (int i = 1; i <= WIND_SOUNDS; ++i)
-            {
-                var windSound = Resources.Load<AudioClip>($"AudioClip/WindWhistle{i}_");
-                m_WindsSounds.Add(windSound);
-            }
-            m_ThunderSound = Resources.Load<AudioClip>($"AudioClip/Thunder");
-            m_SoundTrack = Resources.Load<AudioClip>($"AudioClip/Soundtrack");
+            //m_ThunderSound = Resources.Load<AudioClip>($"AudioClip/Thunder");
+            //m_SoundTrack = Resources.Load<AudioClip>($"AudioClip/Soundtrack");
             m_SoundTrackSource.clip = m_SoundTrack;
 #if UNITY_EDITOR
             m_SoundTrackSource.playOnAwake = false;
@@ -115,19 +110,19 @@ namespace PenguinRun
 
         private void InitialiseSunRaysPool()
         {
-            List<GameObject> sunRaysPrefab = new List<GameObject>();
-            for (int i = 1; i <= SUN_RAYS_PREFAB; ++i)
-            {
-                var sunRay = Resources.Load<GameObject>($"Prefabs/Environment/SunRay/SunRay{i}");
-                sunRaysPrefab.Add(sunRay);
-            }
+            //List<GameObject> sunRaysPrefab = new List<GameObject>();
+            //for (int i = 1; i <= SUN_RAYS_PREFAB; ++i)
+            //{
+            //    var sunRay = Resources.Load<GameObject>($"Prefabs/Environment/SunRay/SunRay{i}");
+            //    sunRaysPrefab.Add(sunRay);
+            //}
 
             var pool = new GameObject("SunRay");
             pool.transform.SetParent(this.transform);
             var activeSunRays = new GameObject($"ActiveSunRays");
             activeSunRays.transform.SetParent(this.transform);
             m_SunRayPool = pool.AddComponent<ObjectPoolManager>();
-            m_SunRayPool.CreateObjPool(sunRaysPrefab, 2, pool.transform, activeSunRays.transform);
+            m_SunRayPool.CreateObjPool(m_SunRaysPrefabs, 2, pool.transform, activeSunRays.transform);
         }
 
         //-------------------------------------------------------------------------------
