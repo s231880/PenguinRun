@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using UnityEngine;
 
 namespace PenguinRun
@@ -15,6 +16,7 @@ namespace PenguinRun
         public bool m_Ready = false;
 
         public Action playerHit;
+        private bool m_IsJumping = false;
 
         private void Awake()
         {
@@ -22,9 +24,17 @@ namespace PenguinRun
             //m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
-        public void Jump()
+        public IEnumerator Jump()
         {
-            m_Animator.SetTrigger("isJumping");
+            if (!m_IsJumping)
+            {
+                m_IsJumping = true;
+                m_Animator.SetTrigger("isJumping");
+                yield return new WaitForSeconds(0.3f);
+                m_IsJumping = false;
+            }
+            
+            //GameController.Instance.DebugJump();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -69,9 +79,11 @@ namespace PenguinRun
             }
         }
 
-        public void Reset()
+        public void ResetManager()
         {
             m_Animator.Rebind();
+            m_IsJumping = false;
         }
+
     }
 }

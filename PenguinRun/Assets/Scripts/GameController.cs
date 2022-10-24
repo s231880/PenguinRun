@@ -83,7 +83,7 @@ namespace PenguinRun
             m_PenguinSpriteRenderer = m_Penguin.GetComponent<SpriteRenderer>();
             m_PenguinSpriteRenderer.enabled = false;
 
-            m_InputManager.tap += ()=> m_MainCharacter.Jump();
+            m_InputManager.tap += ()=> StartCoroutine(m_MainCharacter.Jump());
 
             m_MainCharacter.playerHit += PlayerHit;
             m_EnvironmentManager.Initialise(topRightScreenCorner.x);
@@ -97,7 +97,6 @@ namespace PenguinRun
             m_GuiManager.pressedRestartBtn += Restart;
 
             m_EffectManager.Initialise(topRightScreenCorner, penguinPos);
-
             m_PathManager.Initialise(topRightScreenCorner.x);
         }
 
@@ -116,7 +115,6 @@ namespace PenguinRun
                     CheckScore();
             }
         }
-
         private void SetTimeRange()
         {
             switch (CurrentDifficulty)
@@ -205,7 +203,7 @@ namespace PenguinRun
             Time.timeScale = 1;
             m_PenguinSpriteRenderer.enabled = true;
 
-            m_MainCharacter.Reset();
+            m_MainCharacter.ResetManager();
             m_EffectManager.ResetManager();
 
             CurrentState = GameState.Play;
