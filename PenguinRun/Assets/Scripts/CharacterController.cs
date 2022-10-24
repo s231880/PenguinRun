@@ -24,6 +24,13 @@ namespace PenguinRun
             //m_DustParticleSystem = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
+        private void Update()
+        {
+#if UNITY_EDITOR
+            if (Input.GetKeyDown(KeyCode.H))
+                playerHit?.Invoke();
+#endif
+        }
         public IEnumerator Jump()
         {
             if (!m_IsJumping)
@@ -33,8 +40,6 @@ namespace PenguinRun
                 yield return new WaitForSeconds(0.3f);
                 m_IsJumping = false;
             }
-            
-            //GameController.Instance.DebugJump();
         }
 
         private void OnCollisionEnter2D(Collision2D collision)
@@ -44,6 +49,7 @@ namespace PenguinRun
                 playerHit?.Invoke();
             }
         }
+
 
         public void SetWalkSpeed()
         {

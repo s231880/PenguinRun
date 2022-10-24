@@ -352,7 +352,7 @@ namespace PenguinRun
         //Stop the effects activation and if there is a sun ray active
         public void Stop()
         {
-            //StopAllCoroutines();
+            StopAllCoroutines();
             PlaySnow(false);
             if (m_ActiveRay != null)
             {
@@ -361,10 +361,12 @@ namespace PenguinRun
             }
 
             foreach (var wind in m_Winds)
+            {
                 wind.Stop();
+                wind.Clear();
+            }
             
             ResetManager();
-            
         }
 
         //-----------------------------------------------------------------------
