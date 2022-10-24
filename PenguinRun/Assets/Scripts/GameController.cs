@@ -66,8 +66,8 @@ namespace PenguinRun
         private const int HARD_THRESHOLD = 200;
 
         private const float EASY_SPEED = 8f;
-        private const float MEDIUM_SPEED = 16f;
-        private const float HARD_SPEED = 24f;
+        private const float MEDIUM_SPEED = 12f;
+        private const float HARD_SPEED = 16f;
         private float m_CurrentSpeed = 0f;
 
         [SerializeField] private GameObject m_Penguin;

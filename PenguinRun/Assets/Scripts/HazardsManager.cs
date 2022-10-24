@@ -42,8 +42,8 @@ namespace PenguinRun
         //-------------------------------------------------------------------------------
         //Constant variables
         private const int EASY_HAZARDS = 3;
-        private const int MEDIUM_HAZARDS = 7;
-        private const int HARD_HAZARDS = 9;
+        private const int MEDIUM_HAZARDS = 5;
+        private const int HARD_HAZARDS = 7;
         private const int HIGH_BIRD_MULTIPLIER_CONST = 7;
         private const int NUM_OF_HAZARDS_PER_TYPE = 5;
         private const string FIRE = "Fire";
@@ -165,12 +165,12 @@ namespace PenguinRun
 
                 case GameDifficulty.Medium:
                     m_HazardsCount = MEDIUM_HAZARDS;
-                    m_HazardBreak = 4;
+                    m_HazardBreak = 5;
                     break;
 
                 case GameDifficulty.Hard:
                     m_HazardsCount = HARD_HAZARDS;
-                    m_HazardBreak = 3;
+                    m_HazardBreak = 4;
                     break;
             }
         }
