@@ -62,8 +62,8 @@ namespace PenguinRun
         private float m_TimeRange = 0f;
         //----------------------------------------------------------------
         //Score thresholds to change difficult
-        private const int MEDIUM_THRESHOLD = 100;
-        private const int HARD_THRESHOLD = 200;
+        private const int MEDIUM_THRESHOLD = 150;
+        private const int HARD_THRESHOLD = 300;
 
         private const float EASY_SPEED = 8f;
         private const float MEDIUM_SPEED = 12f;

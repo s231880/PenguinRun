@@ -160,7 +160,7 @@ namespace PenguinRun
             {
                 case GameDifficulty.Easy:
                     m_HazardsCount = EASY_HAZARDS;
-                    m_HazardBreak = 6;
+                    m_HazardBreak = 8;
                     break;
 
                 case GameDifficulty.Medium:
@@ -260,7 +260,7 @@ namespace PenguinRun
                     if (close)
                         startingPos.x += m_HazardsWidthDictionary[type] * i;
                     else
-                        startingPos.x += m_PenguinWidth * i;
+                        startingPos.x += (m_PenguinWidth * i) + 10f ;
 
                     hazard.Activate(startingPos, m_HazardsSpeed);
                     m_ActiveHazardsDictionary[type].Add(hazard);
@@ -380,13 +380,17 @@ namespace PenguinRun
         //Reset Manager when game ends
         public void Stop()
         {
+            StopAllCoroutines();
             foreach (var key in m_HazardListKeys)
             {
                 List<HazardElement> activeElementList = m_ActiveHazardsDictionary[key];
                 if (activeElementList.Count != 0)
                 {
                     foreach (var hazard in activeElementList)
+                    {
+                        hazard.Stop();
                         m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+                    }
 
                     m_ActiveHazardsDictionary[key].Clear();
                 }
@@ -394,7 +398,10 @@ namespace PenguinRun
                 if (toBeRemovedElementList.Count != 0)
                 {
                     foreach (var hazard in toBeRemovedElementList)
+                    {
+                        hazard.Stop();
                         m_ObjPoolsDictionary[key].ReturnObjectToThePool(hazard.gameObject);
+                    }
 
                     m_ElementsToBeRemovedDictionary[key].Clear();
                 }
